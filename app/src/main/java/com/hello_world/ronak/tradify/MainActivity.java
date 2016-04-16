@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
-    Button btn_lo;
+    Button btn_lo,btn_home;
     TextView txt_name,txt_id,txt_email;
     ImageView img_profile;
     @Override
@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btn_lo = (Button)findViewById(R.id.btn_logout);
+        btn_home = (Button) findViewById(R.id.btn_home);
         txt_name = (TextView) findViewById(R.id.txt_name);
         txt_id = (TextView) findViewById(R.id.txt_id);
         txt_email = (TextView) findViewById(R.id.txt_email);
@@ -33,7 +34,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 LoginActivity.firebaseRef.unauth();
-                intent = new Intent(getApplication(),LoginActivity.class);
+                intent = new Intent(getApplication(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+        btn_home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(getApplication(), Activity_HomeScreen.class);
                 startActivity(intent);
             }
         });
