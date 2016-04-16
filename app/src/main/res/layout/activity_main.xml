@@ -37,7 +37,13 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_logout"
+        android:id="@+id/btn_home"
         android:layout_below="@+id/txt_email"
+        android:text="Home"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_logout"
+        android:layout_below="@+id/btn_home"
         android:text="Log Out"/>
 </RelativeLayout>
