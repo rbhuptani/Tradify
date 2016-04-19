@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Tradify</string>
     <string name="facebook_app_id">1767531603466593</string>
-
+    <string name="title_activity_add_product">AddProductActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
