@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rl_product_detail_view" >
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:id="@+id/img_dv_product"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lbl_dv_productName"
+            android:textColor="@color/black"
+            android:layout_below="@id/img_dv_product"
+            android:text="Name : "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_dv_productName"
+            android:textColor="@color/data"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/lbl_dv_productName"
+            android:layout_below="@id/img_dv_product"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:id="@+id/lbl_dv_mode"
+            android:layout_below="@id/lbl_dv_productName"
+            android:text="Mode : "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_dv_transactionMode"
+            android:textColor="@color/data"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/lbl_dv_mode"
+            android:layout_below="@id/lbl_dv_productName"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lbl_dv_details"
+            android:textColor="@color/black"
+            android:layout_below="@id/lbl_dv_mode"
+            android:text="Details : "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt_dv_productDetails"
+            android:textColor="@color/data"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/lbl_dv_details"
+            android:layout_below="@id/lbl_dv_mode"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lbl_dv_userName"
+            android:textColor="@color/black"
+            android:layout_below="@id/lbl_dv_details"
+            android:text="User  Name : "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/data"
+            android:id="@+id/txt_dv_userName"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/lbl_dv_userName"
+            android:layout_below="@id/lbl_dv_details"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lbl_dv_loi"
+            android:textColor="@color/black"
+            android:layout_below="@id/lbl_dv_userName"
+            android:text="List of Items : "
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/data"
+            android:id="@+id/txt_dv_LOI"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/lbl_dv_loi"
+            android:layout_below="@id/lbl_dv_userName"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_dv_tradify"
+            android:text="Tradify"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/txt_dv_LOI"
+            />
+
+    </RelativeLayout>
+</ScrollView>

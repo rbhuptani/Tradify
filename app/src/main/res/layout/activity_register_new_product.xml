@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.hello_world.ronak.tradify.RegisterNewProductActivity">
+
+        <ImageView
+            android:id="@+id/newProdImage"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:scaleType="fitXY"/>
+        <EditText
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/newProdImage"
+            android:hint="Enter Item Name"
+            android:textColor="@color/colorAccent"/>
+        <EditText
+            android:id="@+id/itemDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/itemName"
+            android:hint="Enter Item Details"
+            android:textColor="@color/colorAccent"/>
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            android:layout_below="@id/itemDetails"/>
+        <EditText
+            android:id="@+id/listOfItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/spinner"
+            android:hint="List of Items to trade with (optional)"
+            android:textColor="@color/colorAccent"/>
+        <Button
+            android:id="@+id/tradifyButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/listOfItems"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/colorAccent"
+            android:textAllCaps="false"
+            android:text="Tradify"
+            android:textSize="@dimen/button_text_size"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+</ScrollView>
+    <!--android:textCursorDrawable="@null"
+    android:visibility="visible"
+    android:background="@null"-->
