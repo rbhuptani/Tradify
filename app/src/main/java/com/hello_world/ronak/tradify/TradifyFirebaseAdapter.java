@@ -1,7 +1,10 @@
 package com.hello_world.ronak.tradify;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +18,13 @@ import com.squareup.picasso.Picasso;
  */
 public class TradifyFirebaseAdapter extends FirebaseRecyclerAdapter<Products,TradifyFirebaseAdapter.ProductsViewHolder> {
     private Context mContext ;
+    static OnItemClickListener mItemClickListener;
+    public static interface OnItemClickListener{
+        void onItemClick(View v, int position);
+    }
+    public void SetOnItemClickListener(OnItemClickListener itemListner){
+        mItemClickListener = itemListner;
+    }
     public TradifyFirebaseAdapter(Class<Products> modelClass, int modelLayout,
                                     Class<ProductsViewHolder> holder, Query ref,Context context) {
         super(modelClass,modelLayout,holder,ref);
@@ -26,7 +36,7 @@ public class TradifyFirebaseAdapter extends FirebaseRecyclerAdapter<Products,Tra
         productsViewHolder.txt_name.setText(products.getProductName());
         productsViewHolder.txt_Desc.setText(products.getDescription());
         productsViewHolder.txt_LOI.setText(products.getListOfItems());
-        Picasso.with(mContext).load(products.getProductImage()).into(productsViewHolder.img_product);
+        productsViewHolder.img_product.setImageBitmap(StringToBitMap(products.getProductImage()));
     }
 
     public static class ProductsViewHolder extends RecyclerView.ViewHolder {
@@ -34,12 +44,29 @@ public class TradifyFirebaseAdapter extends FirebaseRecyclerAdapter<Products,Tra
         TextView txt_name;
         TextView txt_Desc;
         TextView txt_LOI;
-        public ProductsViewHolder(View itemView) {
+        public ProductsViewHolder(final View itemView) {
             super(itemView);
             img_product = (ImageView) itemView.findViewById(R.id.productImage);
             txt_name = (TextView) itemView.findViewById(R.id.productName);
             txt_Desc = (TextView) itemView.findViewById(R.id.productDesc);
             txt_LOI = (TextView) itemView.findViewById(R.id.listofitems);
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    if(mItemClickListener != null)
+                        mItemClickListener.onItemClick(itemView,getAdapterPosition());
+                }
+            });
+        }
+    }
+    public Bitmap StringToBitMap(String encodedString){
+        try{
+            byte [] encodeByte= Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }catch(Exception e){
+            e.getMessage();
+            return null;
         }
     }
 }

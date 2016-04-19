@@ -54,7 +54,7 @@ public class Products implements Serializable {
     }
 	@JsonProperty("Mode")
     public void setMode(String Mode) {
-        Mode = this.Mode;
+        this.Mode = Mode;
     }
 	@JsonProperty("PostedDate")
     public String getPostedDate() {
@@ -85,7 +85,6 @@ public class Products implements Serializable {
     }
 	@JsonProperty("ProductName")
     public void setProductName(String ProductName) {
-        Log.d("set Name", ProductName);
         this.ProductName = ProductName;
     }
 	@JsonProperty("Sold")
@@ -110,8 +109,6 @@ public class Products implements Serializable {
     }
 	@JsonProperty("Description")
     public void setDescription(String Description) {
-
-        Log.d("set desc", Description);
         this.Description = Description;
     }
 	@JsonProperty("ListOfItems")
