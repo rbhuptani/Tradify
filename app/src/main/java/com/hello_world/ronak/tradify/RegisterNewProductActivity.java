@@ -58,7 +58,7 @@ public class RegisterNewProductActivity extends AppCompatActivity {
         dropdown.setAdapter(adapter);
         image = (ImageView) findViewById(R.id.newProdImage);
         Bundle bundleData = getIntent().getExtras();
-        Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
+        final Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
 
         //conversion from image to string
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
@@ -84,6 +84,8 @@ public class RegisterNewProductActivity extends AppCompatActivity {
         tradify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String productID;
+
                 prodName = (TextView) findViewById(R.id.itemName);
                 prodDesc = (TextView) findViewById(R.id.itemDetails);
                 listOfItems = (TextView) findViewById(R.id.listOfItems);
@@ -100,13 +102,15 @@ public class RegisterNewProductActivity extends AppCompatActivity {
                 SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
                 String postedDate = format.format(currDate);
                 newProduct.setPostedDate(postedDate);
-                newProduct.setProductId("PID_" + currDate.getTime());
+
 
                 newProduct.setProductImage(imageFile);
                 newProduct.setSold("false");
                 newProduct.setUserID(UserContext.USERID);
-
-                ref.push().setValue(newProduct, new Firebase.CompletionListener() {
+                productID = UserContext.USEREMAIL + prodName.getEditableText().toString() + prodDesc.getEditableText().toString() + currDate.toString() ;
+                productID = String.valueOf(productID.hashCode());
+                newProduct.setProductId("PID_" + productID);
+                ref.child("PID_" + productID).setValue(newProduct, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                         if (firebaseError != null) {
