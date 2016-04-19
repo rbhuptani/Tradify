@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         txt_name.setText(UserContext.USERNAME);
         txt_id.setText(UserContext.USERID);
         txt_email.setText(UserContext.USEREMAIL);
-        Picasso.with(getApplicationContext()).load(UserContext.USERPROFILEURL).into(img_profile);
+        //Picasso.with(getApplicationContext()).load(UserContext.USERPROFILEURL).into(img_profile);
         btn_lo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

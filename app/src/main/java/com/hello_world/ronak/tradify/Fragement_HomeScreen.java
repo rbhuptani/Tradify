@@ -15,7 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.MutableData;
+import com.firebase.client.Transaction;
 
 import java.util.HashMap;
 
@@ -27,7 +31,7 @@ public class Fragement_HomeScreen extends Fragment {
     LinearLayoutManager mLayoutManagar;
     OnListItemSelectedListener mListner;
     public interface OnListItemSelectedListener{
-        public void onListItemSelected(Products product);
+        public void onListItemSelected(Products product,Users user);
     }
     public Fragement_HomeScreen() {
         // Required empty public constructor
@@ -61,12 +65,43 @@ public class Fragement_HomeScreen extends Fragment {
             public void onItemClick(View v, int position) {
                 //Toast.makeText(getActivity(),"Single Click" + Integer.toString(position), Toast.LENGTH_LONG).show();
                 Products product = tfa.getItem(position);
+                Users user = getUserDetails(product.getUserID());
                 Log.d("Mode ",product.getMode());
-                mListner.onListItemSelected(product);
+                mListner.onListItemSelected(product,user);
             }
         });
         mrecyclerView.setAdapter(tfa);
         return rootView;
+    }
+    public Users getUserDetails(String userID){
+        final Users user = new Users();
+        final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
+        uref.child(userID).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                for (MutableData md : mutableData.getChildren()) {
+                    if (md.getKey() == "Username")
+                        user.setUsername(md.getValue().toString());
+                    if (md.getKey() == "UserId")
+                        user.setUserId(md.getValue().toString());
+                    if (md.getKey() == "Email")
+                        user.setEmail(md.getValue().toString());
+                    if (md.getKey() == "UserImage")
+                        user.setUserImage(md.getValue().toString());
+                    if (md.getKey() == "ContactNumber")
+                        user.setContactNumber(Integer.valueOf(md.getValue().toString()));
+                    if (md.getKey() == "Address")
+                        user.setAddress(md.getValue().toString());
+                }
+                return Transaction.abort();
+            }
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                Log.d("on Complete", "called");
+            }
+        });
+        return  user;
     }
 
 }

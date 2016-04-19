@@ -96,29 +96,71 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
 
     @Override
     public void onFirebaseLoggedIn(AuthData authData) {
+        String userID="";
         switch (authData.getProvider()) {
             case "password":
                 mName = (String) authData.getProviderData().get("email");
+                String user_id = String.valueOf(mName.hashCode());
                 break;
             default:
                 mName = (String) authData.getProviderData().get("displayName");
-                UserContext.USERNAME = (String) authData.getProviderData().get("displayName");
-                UserContext.USERID = (String) authData.getProviderData().get("id");
-                UserContext.USEREMAIL = (String) authData.getProviderData().get("email");
-                UserContext.USERPROFILEURL = (String) authData.getProviderData().get("profileImageURL");
+                UserContext.USERNAME = authData.getProviderData().get("displayName").toString();
+                userID = authData.getProviderData().get("id").toString();
+                if(authData.getProviderData().get("email") == null)
+                    UserContext.USEREMAIL = "";
+                else
+                    UserContext.USEREMAIL =authData.getProviderData().get("email").toString();
+                UserContext.USERPROFILEURL = authData.getProviderData().get("profileImageURL").toString();
                 String bimage = "";
                         //BitMapToString(getBitmapFromURL(UserContext.USERPROFILEURL));
-                addUsertoDB(UserContext.USERID,UserContext.USERNAME,"NaN",UserContext.USEREMAIL,bimage);
+                addUsertoDB(userID,UserContext.USERNAME,"NaN",UserContext.USEREMAIL,bimage);
+                //UserContext.USERPROFILEURL = bimage;
                 break;
         }
         //Toast.makeText(getApplicationContext(), LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+        setUserDetails(userID);
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         LoginActivity.this.startActivity(myIntent);
+    }
+
+    public void setUserDetails(String userID){
+        final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
+        uref.child(userID).runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                String key = "Username";
+                for(MutableData md :mutableData.getChildren() ){
+                    if(md.getKey() == "Username")
+                        UserContext.USERNAME = md.getValue().toString();
+                    if(md.getKey() == "UserId")
+                        UserContext.USERID = md.getValue().toString();
+                    if(md.getKey() == "Email")
+                        UserContext.USEREMAIL = md.getValue().toString();
+                    if(md.getKey() == "UserImage")
+                        UserContext.USERPROFILEURL = md.getValue().toString();
+                }
+                return Transaction.abort();
+            }
+
+            @Override
+            public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+                if (b) {
+                    //Log.d("Check","user added");
+                } else {
+                   // Log.d("Check","user exist");
+                }
+            }
+        });
+
     }
 
     public void addUsertoDB(final String uid,String uname,String uPassword,String uemail,String upic){
         final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
         final Users user = new Users();
+        Log.d("Email",uemail);
+        if(uemail == "")
+            uemail = "Not Available";
+
         user.setUserId(uid);
         user.setEmail(uemail);
         user.setUsername(uname);
@@ -202,6 +244,8 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
                 new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
+                String user_id = String.valueOf(userNameET.getText().toString().hashCode());
+                addUsertoDB(user_id,userNameET.getText().toString(),passwordET.getText().toString(),userNameET.getText().toString(),"");
                 Snackbar snackbar = Snackbar.make(userNameET, USER_CREATION_SUCCESS, Snackbar.LENGTH_SHORT);
                 snackbar.show();
             }

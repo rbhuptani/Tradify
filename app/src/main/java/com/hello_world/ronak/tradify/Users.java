@@ -1,6 +1,7 @@
 
 package com.hello_world.ronak.tradify;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "UserImage",
     "Username"
 })
-public class Users {
+public class Users implements Serializable {
 
     @JsonProperty("Address")
     private String Address;

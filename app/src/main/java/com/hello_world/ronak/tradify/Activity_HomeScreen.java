@@ -184,8 +184,8 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
     }
 
     @Override
-    public void onListItemSelected(Products product) {
-        currFragment =  Fragement_ProductDetailView.newInstance(product);
+    public void onListItemSelected(Products product,Users user) {
+        currFragment =  Fragement_ProductDetailView.newInstance(product,user);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
     }

@@ -2,12 +2,16 @@ package com.hello_world.ronak.tradify;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -31,7 +36,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RegisterNewProductActivity extends AppCompatActivity {
+public class RegisterNewProductActivity extends AppCompatActivity  {
+
     ImageView image;
     TextView prodName;
     TextView prodDesc;
@@ -43,11 +49,11 @@ public class RegisterNewProductActivity extends AppCompatActivity {
     Products newProduct = new Products();
     Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
     String imageFile = "";
-    String Latitude="NaN",Longitude="NaN";
-
+    String Latitude = "NaN", Longitude = "NaN";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         recyclerActionBar = getSupportActionBar();
         recyclerActionBar.setDisplayHomeAsUpEnabled(true);
         recyclerActionBar.setHomeButtonEnabled(true);
@@ -58,28 +64,34 @@ public class RegisterNewProductActivity extends AppCompatActivity {
         dropdown.setAdapter(adapter);
         image = (ImageView) findViewById(R.id.newProdImage);
         Bundle bundleData = getIntent().getExtras();
-        final Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
+        try {
+            final Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
 
-        //conversion from image to string
-        ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
-        prodImage.compress(Bitmap.CompressFormat.JPEG, 100, bYtE);
-        //prodImage.recycle();
-        byte[] byteArray = bYtE.toByteArray();
-        imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            //conversion from image to string
+            ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
+            prodImage.compress(Bitmap.CompressFormat.JPEG, 100, bYtE);
+            //prodImage.recycle();
+            byte[] byteArray = bYtE.toByteArray();
+            imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
-        image.setImageBitmap(prodImage);
-        dropDown1 = (Spinner) findViewById(R.id.spinner);
-        dropDown1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mode = parent.getItemAtPosition(position).toString();
-            }
+            image.setImageBitmap(prodImage);
+            dropDown1 = (Spinner) findViewById(R.id.spinner);
+            dropDown1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    mode = parent.getItemAtPosition(position).toString();
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
+        }
+        catch(Exception ex){
+            Toast.makeText(this, "Selected Image is too big.", Toast.LENGTH_SHORT).show();
+            ex.printStackTrace();
+        }
         tradify = (Button) findViewById(R.id.tradifyButton);
         tradify.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,13 +109,10 @@ public class RegisterNewProductActivity extends AppCompatActivity {
                 Log.d("Longitude",Longitude);
                 newProduct.setLocation(Latitude + "," + Longitude);
                 newProduct.setMode(mode);
-
                 Date currDate = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
                 String postedDate = format.format(currDate);
                 newProduct.setPostedDate(postedDate);
-
-
                 newProduct.setProductImage(imageFile);
                 newProduct.setSold("false");
                 newProduct.setUserID(UserContext.USERID);
