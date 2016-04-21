@@ -9,9 +9,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,6 +23,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
+import com.firebase.client.Query;
 import com.firebase.client.Transaction;
 
 import java.util.HashMap;
@@ -26,12 +31,14 @@ import java.util.HashMap;
 
 public class Fragement_HomeScreen extends Fragment {
     static Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
+    static Query _qref;
     TradifyFirebaseAdapter tfa;
     RecyclerView mrecyclerView;
     LinearLayoutManager mLayoutManagar;
     OnListItemSelectedListener mListner;
     public interface OnListItemSelectedListener{
         public void onListItemSelected(Products product,Users user);
+        public void onMenuItemClicked();
     }
     public Fragement_HomeScreen() {
         // Required empty public constructor
@@ -41,6 +48,15 @@ public class Fragement_HomeScreen extends Fragment {
     public static Fragement_HomeScreen newInstance() {
         Fragement_HomeScreen fragment = new Fragement_HomeScreen();
         Bundle args = new Bundle();
+        _qref = ref;
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static Fragement_HomeScreen newInstance(Query ref){
+        Fragement_HomeScreen fragment = new Fragement_HomeScreen();
+        Bundle args = new Bundle();
+        _qref = ref;
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,6 +64,7 @@ public class Fragement_HomeScreen extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -59,7 +76,7 @@ public class Fragement_HomeScreen extends Fragment {
         mrecyclerView.setHasFixedSize(true);
         mLayoutManagar = new LinearLayoutManager(getActivity());
         mrecyclerView.setLayoutManager(mLayoutManagar);
-        tfa = new TradifyFirebaseAdapter(Products.class,R.layout.card_item_view,TradifyFirebaseAdapter.ProductsViewHolder.class,ref,getActivity());
+        tfa = new TradifyFirebaseAdapter(Products.class,R.layout.card_item_view,TradifyFirebaseAdapter.ProductsViewHolder.class,_qref,getActivity());
         tfa.SetOnItemClickListener(new TradifyFirebaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -104,4 +121,18 @@ public class Fragement_HomeScreen extends Fragment {
         return  user;
     }
 
+    @Override
+    public  void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
+        if( menu.findItem(R.id.action_filter) == null)
+            inflater.inflate(R.menu.menu_home_filter,menu);
+        MenuItem filter = menu.findItem(R.id.action_filter);
+        filter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mListner.onMenuItemClicked();
+                return false;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }
