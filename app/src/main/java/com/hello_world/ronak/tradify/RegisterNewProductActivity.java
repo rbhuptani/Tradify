@@ -8,7 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationListener;
+import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -29,14 +29,20 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class RegisterNewProductActivity extends AppCompatActivity  {
+public class RegisterNewProductActivity extends AppCompatActivity implements LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener   {
 
     ImageView image;
     TextView prodName;
@@ -50,6 +56,51 @@ public class RegisterNewProductActivity extends AppCompatActivity  {
     Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
     String imageFile = "";
     String Latitude = "NaN", Longitude = "NaN";
+    private static final long INTERVAL = 1000 * 10;
+    private static final long FASTEST_INTERVAL = 1000 * 5;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    Location mCurrentLocation;
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mGoogleApiClient.connect();
+    }
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+    private boolean isGoogleAvailable() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (ConnectionResult.SUCCESS == status) {
+            return true;
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(status, this, 0).show();
+            return false;
+        }
+    }
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +114,11 @@ public class RegisterNewProductActivity extends AppCompatActivity  {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
         dropdown.setAdapter(adapter);
         image = (ImageView) findViewById(R.id.newProdImage);
+        if (!isGoogleAvailable()) {
+            finish();
+        }
+        createLocationRequest();
+        buildGoogleApiClient();
         Bundle bundleData = getIntent().getExtras();
         try {
             final Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
@@ -112,10 +168,12 @@ public class RegisterNewProductActivity extends AppCompatActivity  {
                 Date currDate = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
                 String postedDate = format.format(currDate);
-                newProduct.setPostedDate(postedDate);
+                newProduct.setPostedDate(currDate.getTime());
                 newProduct.setProductImage(imageFile);
-                newProduct.setSold("false");
+                newProduct.setSold(false);
                 newProduct.setUserID(UserContext.USERID);
+                newProduct.setPrice(0); //change
+                newProduct.setCategory("Others"); //change
                 productID = UserContext.USEREMAIL + prodName.getEditableText().toString() + prodDesc.getEditableText().toString() + currDate.toString() ;
                 productID = String.valueOf(productID.hashCode());
                 newProduct.setProductId("PID_" + productID);
@@ -134,5 +192,39 @@ public class RegisterNewProductActivity extends AppCompatActivity  {
             }
         });
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
+        Latitude = String.valueOf(mCurrentLocation.getLatitude());
+        Longitude = String.valueOf(mCurrentLocation.getLongitude());
+    }
+
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }
