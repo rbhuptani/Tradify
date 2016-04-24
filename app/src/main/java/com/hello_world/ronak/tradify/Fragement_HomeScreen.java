@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,14 +26,18 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.MutableData;
 import com.firebase.client.Query;
 import com.firebase.client.Transaction;
+import com.firebase.client.ValueEventListener;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Fragement_HomeScreen extends Fragment {
     static Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
     static Query _qref;
     TradifyFirebaseAdapter tfa;
+    TradifyRecyclerAdapter tra;
     RecyclerView mrecyclerView;
     LinearLayoutManager mLayoutManagar;
     OnListItemSelectedListener mListner;
@@ -65,6 +70,7 @@ public class Fragement_HomeScreen extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -83,16 +89,25 @@ public class Fragement_HomeScreen extends Fragment {
                 //Toast.makeText(getActivity(),"Single Click" + Integer.toString(position), Toast.LENGTH_LONG).show();
                 Products product = tfa.getItem(position);
                 Users user = getUserDetails(product.getUserID());
-                Log.d("Mode ",product.getMode());
-                mListner.onListItemSelected(product,user);
+                Log.d("Mode ", product.getMode());
+                mListner.onListItemSelected(product, user);
             }
         });
+        /*tra = new TradifyRecyclerAdapter(getContext());
+        try{
+            new setupAdapter(tra).execute();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }*/
         mrecyclerView.setAdapter(tfa);
+
         return rootView;
     }
     public Users getUserDetails(String userID){
         final Users user = new Users();
         final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
+
         uref.child(userID).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
@@ -134,5 +149,49 @@ public class Fragement_HomeScreen extends Fragment {
             }
         });
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    private class setupAdapter extends AsyncTask<Void,Void,Void> {
+        private final WeakReference<TradifyRecyclerAdapter> adapterRef;
+        public  setupAdapter(TradifyRecyclerAdapter adapter){
+            adapterRef = new WeakReference<TradifyRecyclerAdapter>(adapter);
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    ProductLocalDB.PRODUCT_LOCAL_DB.clear();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Products product = ProductLocalDB.createProduct( (HashMap) ds.getValue());
+                        ProductLocalDB.PRODUCT_LOCAL_DB.add(product);
+                    }
+                    Log.d("Product DB count", String.valueOf(ProductLocalDB.PRODUCT_LOCAL_DB.size()));
+
+                }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void voids ){
+            Log.d("Post execute method","called");
+            final TradifyRecyclerAdapter tra = adapterRef.get();
+            tra.SetOnItemClickListener(new TradifyRecyclerAdapter.OnItemClickListener_Recycler() {
+                @Override
+                public void onItemClick(View v, int position) {
+                    Products product = tra.getItem(position);
+                    Users user = getUserDetails(product.getUserID());
+                    Log.d("Mode ", product.getMode());
+                    mListner.onListItemSelected(product, user);
+                }
+            });
+            tra.notifyItemChanged(0);
+        }
     }
 }
