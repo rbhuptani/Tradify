@@ -104,6 +104,20 @@
             android:layout_toRightOf="@+id/lbl_dv_loi"
             android:layout_below="@id/lbl_dv_userName"
             />
+        <fragment
+            android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+            android:id="@+id/moviePlayer"
+            android:layout_below="@+id/txt_dv_LOI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/googlemap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/moviePlayer"
+            />
 
         <Button
             android:layout_width="wrap_content"
@@ -111,7 +125,7 @@
             android:id="@+id/btn_dv_tradify"
             android:text="Tradify"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/txt_dv_LOI"
+            android:layout_below="@id/googlemap"
             />
 
     </RelativeLayout>
