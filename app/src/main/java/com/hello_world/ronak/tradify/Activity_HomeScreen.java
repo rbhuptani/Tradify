@@ -9,18 +9,25 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioButton;
 
+import com.firebase.client.Query;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.io.ByteArrayOutputStream;
 
-public class Activity_HomeScreen extends AppCompatActivity implements Fragement_HomeScreen.OnListItemSelectedListener {
+public class Activity_HomeScreen extends AppCompatActivity implements Fragement_HomeScreen.OnListItemSelectedListener, Fragment_Filter.OnFilterAppliedListener {
     Fragment currFragment;
+    Toolbar mtoolBar;
+    ActionBar mActionbar;
+
     private static int CAMERA_REQUEST_CODE = 1;
     private static int GALLERY_REQUEST_CODE = 2;
     View mLayout;
@@ -30,6 +37,18 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
         setContentView(R.layout.activity__home_screen);
         currFragment = Fragement_HomeScreen.newInstance();
         mLayout = findViewById(R.id.lay_homescreen);
+        mtoolBar = (Toolbar) findViewById(R.id.hometoolbar);
+        setSupportActionBar(mtoolBar);
+        mActionbar = getSupportActionBar();
+        mActionbar.setDisplayHomeAsUpEnabled(true);
+        mtoolBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+
+            }
+        });
+        findViewById(R.id.fab).setVisibility(View.VISIBLE);
         FloatingActionMenu fab = (FloatingActionMenu) findViewById(R.id.fab);
         FloatingActionButton camera = (FloatingActionButton) fab.getChildAt(0);
         camera.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +99,24 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
         });
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).commit();
+    }
+
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+        switch(view.getId()) {
+            case R.id.rb_sort_pricelh:
+                if (checked) {
+                    ((RadioButton)findViewById(R.id.rb_sort_pricelh)).setChecked(true);
+                    ((RadioButton)findViewById(R.id.rb_sort_pricehl)).setChecked(false);
+                }
+                break;
+            case R.id.rb_sort_pricehl:
+                if (checked) {
+                    ((RadioButton)findViewById(R.id.rb_sort_pricelh)).setChecked(false);
+                    ((RadioButton)findViewById(R.id.rb_sort_pricehl)).setChecked(true);
+                }
+                break;
+        }
     }
 
     @Override
@@ -186,6 +223,20 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
     @Override
     public void onListItemSelected(Products product,Users user) {
         currFragment =  Fragement_ProductDetailView.newInstance(product,user);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onMenuItemClicked() {
+        currFragment =  Fragment_Filter.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void applyFilter(Query ref) {
+        currFragment =  Fragement_HomeScreen.newInstance(ref);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
     }

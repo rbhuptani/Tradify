@@ -153,6 +153,8 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
             @Override
             public void onClick(View v) {
                 String productID;
+                String Video_URL = "https://www.youtube.com/watch?v=ANHXqIfjLG4"; //prodVideo.getEditableText().toString();
+                String[] temp = Video_URL.split("=");
 
                 prodName = (TextView) findViewById(R.id.itemName);
                 prodDesc = (TextView) findViewById(R.id.itemDetails);
@@ -177,6 +179,12 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
                 productID = UserContext.USEREMAIL + prodName.getEditableText().toString() + prodDesc.getEditableText().toString() + currDate.toString() ;
                 productID = String.valueOf(productID.hashCode());
                 newProduct.setProductId("PID_" + productID);
+                try {
+                    newProduct.setVideoId(temp[1]);
+                }
+                catch (Exception ex){
+                    newProduct.setVideoId("");
+                }
                 ref.child("PID_" + productID).setValue(newProduct, new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {

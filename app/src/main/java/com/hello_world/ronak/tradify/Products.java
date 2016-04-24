@@ -14,19 +14,24 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "Category",
         "Description",
         "ListOfItems",
         "Location",
         "Mode",
         "PostedDate",
+        "Price",
         "ProductId",
         "ProductImage",
         "ProductName",
         "Sold",
-        "UserID"
+        "UserID",
+        "VideoId"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Products implements Serializable {
+    @JsonProperty("Category")
+    private String Category;
     @JsonProperty("Description")
     private String Description;
     @JsonProperty("ListOfItems")
@@ -36,7 +41,9 @@ public class Products implements Serializable {
     @JsonProperty("Mode")
     private String Mode;
     @JsonProperty("PostedDate")
-    private String PostedDate;
+    private long PostedDate;
+    @JsonProperty("Price")
+    private double Price;
     @JsonProperty("ProductId")
     private String ProductId;
     @JsonProperty("ProductImage")
@@ -44,9 +51,11 @@ public class Products implements Serializable {
     @JsonProperty("ProductName")
     private String ProductName;
     @JsonProperty("Sold")
-    private String Sold;
+    private Boolean Sold;
     @JsonProperty("UserID")
     private String UserID;
+    @JsonProperty("VideoId")
+    private String VideoId;
     public Products(){}
 	@JsonProperty("Mode")
     public String getMode() {
@@ -56,12 +65,28 @@ public class Products implements Serializable {
     public void setMode(String Mode) {
         this.Mode = Mode;
     }
+    @JsonProperty("VideoId")
+    public String getVideoId() {
+        return VideoId;
+    }
+    @JsonProperty("Mode")
+    public void setVideoId(String VideoId) {
+        this.VideoId = VideoId;
+    }
+    @JsonProperty("Category")
+    public String getCategory() {
+        return Category;
+    }
+    @JsonProperty("Category")
+    public void setCategory(String Category) {
+        this.Category = Category;
+    }
 	@JsonProperty("PostedDate")
-    public String getPostedDate() {
+    public long getPostedDate() {
         return PostedDate;
     }
 	@JsonProperty("PostedDate")
-    public void setPostedDate(String PostedDate) {
+    public void setPostedDate(long PostedDate) {
         this.PostedDate = PostedDate;
     }
 	@JsonProperty("ProductId")
@@ -88,11 +113,11 @@ public class Products implements Serializable {
         this.ProductName = ProductName;
     }
 	@JsonProperty("Sold")
-    public String getSold() {
+    public Boolean getSold() {
         return Sold;
     }
 	@JsonProperty("Sold")
-    public void setSold(String Sold) {
+    public void setSold(Boolean Sold) {
         this.Sold = Sold;
     }
 	@JsonProperty("UserID")
@@ -126,6 +151,15 @@ public class Products implements Serializable {
 	@JsonProperty("Location")
     public void setLocation(String Location) {
         this.Location = Location;
+    }
+
+    @JsonProperty("Price")
+    public double getPrice() {
+        return Price;
+    }
+    @JsonProperty("Price")
+    public void setPrice(double Price) {
+        this.Price= Price;
     }
 
 
