@@ -6,4 +6,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="data">#323232</color>
+    <color name="colorTabPrimary">#ffffff</color>
+    <color name="colorSelectTabPrimary">#000000</color>
+    <color name="colorUnderline">#ff69b4</color>
 </resources>
