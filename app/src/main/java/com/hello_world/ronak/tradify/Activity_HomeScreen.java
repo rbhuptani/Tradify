@@ -7,15 +7,24 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.firebase.client.Query;
 import com.github.clans.fab.FloatingActionButton;
@@ -23,14 +32,32 @@ import com.github.clans.fab.FloatingActionMenu;
 
 import java.io.ByteArrayOutputStream;
 
-public class Activity_HomeScreen extends AppCompatActivity implements Fragement_HomeScreen.OnListItemSelectedListener, Fragment_Filter.OnFilterAppliedListener {
+public class Activity_HomeScreen extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener ,Fragement_HomeScreen.OnListItemSelectedListener, Fragment_Filter.OnFilterAppliedListener {
     Fragment currFragment;
     Toolbar mtoolBar;
+    Intent intent;
     ActionBar mActionbar;
-
+    DrawerLayout mdrawerLayout;
+    NavigationView mnavigationView;
     private static int CAMERA_REQUEST_CODE = 1;
     private static int GALLERY_REQUEST_CODE = 2;
+    static boolean FILTER_CAT = false;
+    static boolean FILTER_PRICE = false;
+    static boolean FILTER_TIME = false;
+    static boolean SORT_PRICE = false;
+    static boolean SORT_TIME = false;
     View mLayout;
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +68,7 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
         setSupportActionBar(mtoolBar);
         mActionbar = getSupportActionBar();
         mActionbar.setDisplayHomeAsUpEnabled(true);
+
         mtoolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,26 +125,131 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
 
             }
         });
+        mnavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        Bitmap b = StringToBitMap(UserContext.USERPROFILEURL);
+        ((ImageView)mnavigationView.getHeaderView(0).findViewById(R.id.profile_image)).setImageBitmap(b);
+        mnavigationView.setNavigationItemSelectedListener(this);
+
+        mdrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        ActionBarDrawerToggle actionBarDrawerToggle =new ActionBarDrawerToggle(this,mdrawerLayout,mtoolBar,R.string.abt_od, R.string.abt_cd) {
+            @Override
+            public  void onDrawerClosed(View v){
+                super.onDrawerClosed(v);
+            }
+
+            @Override
+            public  void onDrawerOpened(View v){
+                super.onDrawerOpened(v);
+            }
+
+        };
+
+        mdrawerLayout.setDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).commit();
     }
 
     public void onRadioButtonClicked(View view) {
         boolean checked = ((RadioButton) view).isChecked();
+        resetRadioButtons(view);
         switch(view.getId()) {
             case R.id.rb_sort_pricelh:
-                if (checked) {
+                SORT_PRICE = true;
+                if (checked)
                     ((RadioButton)findViewById(R.id.rb_sort_pricelh)).setChecked(true);
-                    ((RadioButton)findViewById(R.id.rb_sort_pricehl)).setChecked(false);
-                }
                 break;
-            case R.id.rb_sort_pricehl:
-                if (checked) {
-                    ((RadioButton)findViewById(R.id.rb_sort_pricelh)).setChecked(false);
-                    ((RadioButton)findViewById(R.id.rb_sort_pricehl)).setChecked(true);
-                }
+            case R.id.chk_ele:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_ele)).setChecked(true);
+                break;
+            case R.id.chk_cars:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_cars)).setChecked(true);
+                break;
+            case R.id.chk_sports:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_sports)).setChecked(true);
+                break;
+            case R.id.chk_home:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_home)).setChecked(true);
+                break;
+            case R.id.chk_movies:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_movies)).setChecked(true);
+                break;
+            case R.id.chk_fashion:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_fashion)).setChecked(true);
+                break;
+            case R.id.chk_baby:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_baby)).setChecked(true);
+                break;
+            case R.id.chk_others:
+                FILTER_CAT = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_others)).setChecked(true);
+                break;
+            case R.id.chk_24hr:
+                FILTER_TIME = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_24hr)).setChecked(true);
+                break;
+            case R.id.chk_7days:
+                FILTER_TIME = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_7days)).setChecked(true);
+                break;
+            case R.id.chk_30days:
+                FILTER_TIME = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_30days)).setChecked(true);
+                break;
+            case R.id.chk_sort_posted:
+                SORT_TIME = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_sort_posted)).setChecked(true);
+                break;
+            case R.id.chk_price:
+                FILTER_PRICE = true;
+                if (checked)
+                    ((RadioButton)findViewById(R.id.chk_price)).setChecked(true);
                 break;
         }
+    }
+
+    public void resetRadioButtons(View view){
+        ((RadioButton)findViewById(R.id.chk_ele)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_cars)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_sports)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_home)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_movies)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_fashion)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_baby)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_others)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_24hr)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_7days)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_30days)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_sort_posted)).setChecked(false);
+        ((RadioButton)findViewById(R.id.rb_sort_pricelh)).setChecked(false);
+        ((RadioButton)findViewById(R.id.chk_price)).setChecked(false);
+        ((EditText)findViewById(R.id.edit_prc_min)).setText("");
+        ((EditText)findViewById(R.id.edit_prc_max)).setText("");
+        FILTER_CAT = false;
+        FILTER_PRICE = false;
+        FILTER_TIME = false;
+        SORT_PRICE = false;
+        SORT_TIME = false;
+
     }
 
     @Override
@@ -239,5 +372,34 @@ public class Activity_HomeScreen extends AppCompatActivity implements Fragement_
         currFragment =  Fragement_HomeScreen.newInstance(ref);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.drw_home:
+                intent = new Intent(this,Activity_HomeScreen.class);
+                startActivity(intent);
+                break;
+            case R.id.drw_add_product:
+                intent = new Intent(this,RegisterNewProductActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.drw_my_profile:
+                Toast.makeText(getApplicationContext(),"My profile clicked",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.drw_abtus:
+                Toast.makeText(getApplicationContext(), "About us clicked", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.drw_logoff:
+                intent = new Intent(this,LoginActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        mdrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
