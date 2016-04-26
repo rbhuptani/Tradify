@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/drw_home"
+            android:checked="false"
+            android:icon="@drawable/ic_home"
+            android:title="Task 2"/>
+        <item
+            android:id="@+id/drw_add_product"
+            android:checked="false"
+            android:icon="@drawable/ic_add_product"
+            android:title="Trade Product"/>
+        <item
+            android:id="@+id/drw_my_profile"
+            android:checked="false"
+            android:icon="@drawable/ic_abtme"
+            android:title="My Profile"/>
+        <item
+            android:id="@+id/drw_abtus"
+            android:checked="false"
+            android:icon="@drawable/ic_about_us"
+            android:title="About Us"/>
+        <item
+            android:id="@+id/drw_logoff"
+            android:checked="false"
+            android:icon="@drawable/ic_logout"
+            android:title="Log off"/>"
+    </group>
+</menu>

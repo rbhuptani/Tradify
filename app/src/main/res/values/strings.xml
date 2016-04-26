@@ -6,4 +6,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="google_maps_key" templateMergeStrategy = "preserve"
         translatable = "false">AIzaSyDPu48Bz_eqorxadUSSSej30c7hZ8KJfe8</string>
+    <string name="abt_od">Open Drawer</string>
+    <string name="abt_cd">Close Drawer</string>
 </resources>

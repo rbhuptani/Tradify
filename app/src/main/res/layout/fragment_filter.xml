@@ -33,13 +33,14 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_ele"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
+                android:onClick="onRadioButtonClicked"
                 />
 
             <TextView android:layout_width="wrap_content"
@@ -51,13 +52,14 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_cars"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
+                android:onClick="onRadioButtonClicked"
                 />
 
             <TextView android:layout_width="wrap_content"
@@ -69,13 +71,14 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_sports"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
+                android:onClick="onRadioButtonClicked"
                 />
 
             <TextView android:layout_width="wrap_content"
@@ -87,12 +90,13 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_home"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
+                android:onClick="onRadioButtonClicked"
                 android:paddingRight="0dp"
                 />
 
@@ -105,12 +109,13 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_movies"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
+                android:onClick="onRadioButtonClicked"
                 android:paddingRight="0dp"
                 />
 
@@ -123,11 +128,12 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_fashion"
                 android:layout_columnSpan="1"
+                android:onClick="onRadioButtonClicked"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
                 />
@@ -141,11 +147,12 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_baby"
                 android:layout_columnSpan="1"
+                android:onClick="onRadioButtonClicked"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
                 />
@@ -159,12 +166,13 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_others"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
+                android:onClick="onRadioButtonClicked"
                 android:paddingRight="0dp"
                 />
 
@@ -186,11 +194,12 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_24hr"
                 android:layout_columnSpan="1"
+                android:onClick="onRadioButtonClicked"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
                 />
@@ -203,12 +212,13 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_7days"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="1"
+                android:onClick="onRadioButtonClicked"
                 android:paddingRight="0dp"
                 />
             <TextView android:layout_width="wrap_content"
@@ -220,76 +230,17 @@
                 android:textColor="@color/data"
                 android:layout_columnWeight="20"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_30days"
                 android:layout_columnSpan="1"
+                android:onClick="onRadioButtonClicked"
                 android:layout_columnWeight="1"
                 android:paddingRight="0dp"
                 />
 
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_distance"
-                android:text="Distance"
-                android:textColor="@color/black"
-                android:textAllCaps="true"
-                android:textSize="18dp"
-                android:layout_columnSpan="2"
-                />
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_dist_nearby"
-                android:text="Nearby (1 mile)"
-                android:textSize="15dp"
-                android:layout_columnSpan="1"
-                android:textColor="@color/data"
-                android:layout_columnWeight="20"
-                />
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chk_nearby"
-                android:layout_columnSpan="1"
-                android:layout_columnWeight="1"
-                android:paddingRight="0dp"
-                />
 
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_dist_area"
-                android:text="In my Area (5 mile)"
-                android:textSize="15dp"
-                android:layout_columnSpan="1"
-                android:textColor="@color/data"
-                android:layout_columnWeight="20"
-                />
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chk_area"
-                android:layout_columnSpan="1"
-                android:layout_columnWeight="1"
-                android:paddingRight="0dp"
-                />
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_dist_city"
-                android:text="In my City (5 mile)"
-                android:textSize="15dp"
-                android:layout_columnSpan="1"
-                android:textColor="@color/data"
-                android:layout_columnWeight="20"
-                />
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chk_city"
-                android:layout_columnSpan="1"
-                android:layout_columnWeight="1"
-                android:paddingRight="0dp"
-                />
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lbl_price"
@@ -297,7 +248,17 @@
                 android:textColor="@color/black"
                 android:textAllCaps="true"
                 android:textSize="18dp"
-                android:layout_columnSpan="2"
+                android:layout_columnWeight="5"
+                android:layout_columnSpan="1"
+                />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/chk_price"
+                android:layout_columnSpan="1"
+                android:onClick="onRadioButtonClicked"
+                android:layout_columnWeight="1"
+                android:paddingRight="0dp"
                 />
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -339,23 +300,7 @@
                 android:textSize="18dp"
                 android:layout_columnSpan="2"
                 />
-            <TextView android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lbl_sort_dist"
-                android:text="Distance"
-                android:textSize="15dp"
-                android:layout_columnSpan="1"
-                android:textColor="@color/data"
-                android:layout_columnWeight="15"
-                />
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chk_sort_dist"
-                android:layout_columnSpan="1"
-                android:layout_columnWeight="1"
-                android:paddingRight="0dp"
-                />
+
         </GridLayout>
         <GridLayout
             android:layout_width="match_parent"
@@ -370,31 +315,15 @@
                 android:textSize="15dp"
                 android:layout_columnSpan="1"
                 android:textColor="@color/data"
-                android:layout_columnWeight="25"
+                android:layout_columnWeight="11"
                 />
-            <RadioGroup android:id="@+id/rb_grp_sort"
-                android:layout_columnSpan="1"
-                android:layout_columnWeight="1" >
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/rb_sort_pricelh"
-                        android:text="Min"
-                        android:onClick="onRadioButtonClicked"
-                        />
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/rb_sort_pricehl"
-                        android:paddingRight="0dp"
-                        android:text="Max"
-                        android:onClick="onRadioButtonClicked"/>
-
-                </LinearLayout>
-            </RadioGroup>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rb_sort_pricelh"
+                android:onClick="onRadioButtonClicked"
+                android:layout_columnWeight="1"
+                />
         </GridLayout>
         <GridLayout
             android:layout_width="match_parent"
@@ -410,14 +339,15 @@
                 android:textSize="15dp"
                 android:layout_columnSpan="1"
                 android:textColor="@color/data"
-                android:layout_columnWeight="20"
+                android:layout_columnWeight="22"
                 />
-            <CheckBox
+            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/chk_sort_posted"
                 android:layout_columnSpan="1"
                 android:layout_columnWeight="3.5"
+                android:onClick="onRadioButtonClicked"
                 android:paddingRight="0dp"
                 />
 
