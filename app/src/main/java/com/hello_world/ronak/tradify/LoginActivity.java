@@ -162,7 +162,7 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
         user.setUsername(uname);
         user.setPassword(uPassword);
         user.setAddress("");
-        user.setContactNumber(0);
+        user.setContactNumber("");
         uref.child(uid).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {

@@ -46,6 +46,8 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
     static boolean FILTER_TIME = false;
     static boolean SORT_PRICE = false;
     static boolean SORT_TIME = false;
+    Products product;
+    Users user;
     View mLayout;
     public Bitmap StringToBitMap(String encodedString) {
         try {
@@ -62,8 +64,6 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__home_screen);
-        currFragment = Fragement_HomeScreen.newInstance();
-        mLayout = findViewById(R.id.lay_homescreen);
         mtoolBar = (Toolbar) findViewById(R.id.hometoolbar);
         setSupportActionBar(mtoolBar);
         mActionbar = getSupportActionBar();
@@ -77,54 +77,6 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
             }
         });
         findViewById(R.id.fab).setVisibility(View.VISIBLE);
-        FloatingActionMenu fab = (FloatingActionMenu) findViewById(R.id.fab);
-        FloatingActionButton camera = (FloatingActionButton) fab.getChildAt(0);
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-
-                        requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                CAMERA_REQUEST_CODE);
-                    } else {
-                        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                        startActivityForResult(intent, CAMERA_REQUEST_CODE);
-                    }
-                } else {
-                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                    startActivityForResult(intent, CAMERA_REQUEST_CODE);
-                }
-            }
-        });
-
-        FloatingActionButton gallery = (FloatingActionButton) fab.getChildAt(1);
-        gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                GALLERY_REQUEST_CODE);
-                    } else {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(Intent.createChooser(intent, "Select File"), GALLERY_REQUEST_CODE);
-                    }
-                }else{
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent, "Select File"), GALLERY_REQUEST_CODE);
-                }
-
-            }
-        });
         mnavigationView = (NavigationView) findViewById(R.id.navigation_view);
         Bitmap b = StringToBitMap(UserContext.USERPROFILEURL);
         ((ImageView)mnavigationView.getHeaderView(0).findViewById(R.id.profile_image)).setImageBitmap(b);
@@ -146,8 +98,73 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
 
         mdrawerLayout.setDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.recyclerContainer, currFragment).commit();
+
+        Bundle bundleData = getIntent().getExtras();
+        if(bundleData!=null) {
+            boolean isUserFlow = (boolean) bundleData.getSerializable("userprofile");
+            if(isUserFlow) {
+                product = (Products) bundleData.getSerializable("product");
+                user = (Users) bundleData.getSerializable("user");
+                currFragment = Fragement_ProductDetailView.newInstance(product, user);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+            }
+        }
+        else {
+            currFragment = Fragement_HomeScreen.newInstance();
+            mLayout = findViewById(R.id.lay_homescreen);
+            FloatingActionMenu fab = (FloatingActionMenu) findViewById(R.id.fab);
+            FloatingActionButton camera = (FloatingActionButton) fab.getChildAt(0);
+            camera.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (checkSelfPermission(Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+
+                            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                    CAMERA_REQUEST_CODE);
+                        } else {
+                            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                            startActivityForResult(intent, CAMERA_REQUEST_CODE);
+                        }
+                    } else {
+                        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                        startActivityForResult(intent, CAMERA_REQUEST_CODE);
+                    }
+                }
+            });
+
+            FloatingActionButton gallery = (FloatingActionButton) fab.getChildAt(1);
+            gallery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    GALLERY_REQUEST_CODE);
+                        } else {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, "Select File"), GALLERY_REQUEST_CODE);
+                        }
+                    } else {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select File"), GALLERY_REQUEST_CODE);
+                    }
+
+                }
+            });
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recyclerContainer, currFragment).commit();
+        }
     }
 
     public void onRadioButtonClicked(View view) {
@@ -355,7 +372,7 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
 
     @Override
     public void onListItemSelected(Products product,Users user) {
-        currFragment =  Fragement_ProductDetailView.newInstance(product,user);
+        currFragment =  Fragement_ProductDetailView.newInstance(product, user);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
     }
@@ -374,6 +391,16 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+
+    }
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();

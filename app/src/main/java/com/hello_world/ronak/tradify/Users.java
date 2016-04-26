@@ -26,7 +26,7 @@ public class Users implements Serializable {
     @JsonProperty("Address")
     private String Address;
     @JsonProperty("ContactNumber")
-    private Integer ContactNumber;
+    private String ContactNumber;
     @JsonProperty("Email")
     private String Email;
     @JsonProperty("Password")
@@ -66,7 +66,7 @@ public class Users implements Serializable {
      *     The ContactNumber
      */
     @JsonProperty("ContactNumber")
-    public Integer getContactNumber() {
+    public String getContactNumber() {
         return ContactNumber;
     }
 
@@ -76,7 +76,7 @@ public class Users implements Serializable {
      *     The ContactNumber
      */
     @JsonProperty("ContactNumber")
-    public void setContactNumber(Integer ContactNumber) {
+    public void setContactNumber(String ContactNumber) {
         this.ContactNumber = ContactNumber;
     }
 

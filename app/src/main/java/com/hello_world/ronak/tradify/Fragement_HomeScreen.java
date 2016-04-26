@@ -83,7 +83,21 @@ public class Fragement_HomeScreen extends Fragment {
         mLayoutManagar = new LinearLayoutManager(getActivity());
         mrecyclerView.setLayoutManager(mLayoutManagar);
         tfa = new TradifyFirebaseAdapter(Products.class,R.layout.card_item_view,TradifyFirebaseAdapter.ProductsViewHolder.class,_qref,getActivity());
+
         tfa.SetOnItemClickListener(new TradifyFirebaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                try {
+                    new getUserData(position).execute();
+                }
+                catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        //below withlout async
+       /* tfa.SetOnItemClickListener(new TradifyFirebaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 //Toast.makeText(getActivity(),"Single Click" + Integer.toString(position), Toast.LENGTH_LONG).show();
@@ -92,7 +106,7 @@ public class Fragement_HomeScreen extends Fragment {
                 Log.d("Mode ", product.getMode());
                 mListner.onListItemSelected(product, user);
             }
-        });
+        });*/
         /*tra = new TradifyRecyclerAdapter(getContext());
         try{
             new setupAdapter(tra).execute();
@@ -104,6 +118,34 @@ public class Fragement_HomeScreen extends Fragment {
 
         return rootView;
     }
+
+    private class getUserData extends AsyncTask<Void,Void,Void> {
+        int position;
+        Products product;
+        Users user;
+        public  getUserData(int p){
+            position = p;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            product = tfa.getItem(position);
+            user = getUserDetails(product.getUserID());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //Log.d("User iD ", user.getUserId());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void voids) {
+            mListner.onListItemSelected(product,user);
+        }
+    }
+
     public Users getUserDetails(String userID){
         final Users user = new Users();
         final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
@@ -121,7 +163,7 @@ public class Fragement_HomeScreen extends Fragment {
                     if (md.getKey() == "UserImage")
                         user.setUserImage(md.getValue().toString());
                     if (md.getKey() == "ContactNumber")
-                        user.setContactNumber(Integer.valueOf(md.getValue().toString()));
+                        user.setContactNumber(md.getValue().toString());
                     if (md.getKey() == "Address")
                         user.setAddress(md.getValue().toString());
                 }

@@ -43,16 +43,20 @@ public class TradifyRecyclerAdapter extends RecyclerView.Adapter<TradifyRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d("View holder PD count", String.valueOf(ProductLocalDB.PRODUCT_LOCAL_DB.size()));
-        Products product = ProductLocalDB.PRODUCT_LOCAL_DB.get(position);
-        Log.d("Product_Id",product.getProductId());
-        holder.bindProductData(product);
-
+        if(position>=0 && position<ProductLocalDB.PRODUCT_LOCAL_DB.size()) {
+            Products product = ProductLocalDB.PRODUCT_LOCAL_DB.get(position);
+            Log.d("Product_Id", product.getProductId());
+            holder.bindProductData(product);
+        }
     }
 
     public Products getItem(int position){
+        Products product = new Products();
         Log.d("getItem PD count", String.valueOf(ProductLocalDB.PRODUCT_LOCAL_DB.size()));
-        Products product = ProductLocalDB.PRODUCT_LOCAL_DB.get(position);
-        return  product;
+        if(position>=0 && position<ProductLocalDB.PRODUCT_LOCAL_DB.size()) {
+            product = ProductLocalDB.PRODUCT_LOCAL_DB.get(position);
+        }
+        return product;
     }
 
     @Override

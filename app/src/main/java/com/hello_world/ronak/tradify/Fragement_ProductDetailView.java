@@ -6,12 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.telephony.SmsManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -69,16 +72,20 @@ public class Fragement_ProductDetailView extends Fragment implements
     private GoogleApiClient mGoogleApiClient;
     private int RECOVERY_DIALOG_REQUEST = 1;
     private SupportMapFragment mMapFragment;
+    SmsManager sms;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Location mLastLocation;
     public static String ARG_PRODUCT = "product_obj";
     public static String ARG_USER = "user_obj";
-    public static Products _product;
+    public static Products product;
     public static Users user;
     YouTubePlayer mPlayer;
     String mVideoId;
     TextView txt_name, txt_details, txt_mode, txt_username, txt_loi;
     ImageView img_product;
+    Button tradify;
+    String sender;
+    String txtMessage;
 
     public static Fragement_ProductDetailView newInstance(Products product, Users user) {
         Fragement_ProductDetailView fragment = new Fragement_ProductDetailView();
@@ -127,8 +134,9 @@ public class Fragement_ProductDetailView extends Fragment implements
         txt_username = (TextView) rootView.findViewById(R.id.txt_dv_userName);
         txt_loi = (TextView) rootView.findViewById(R.id.txt_dv_LOI);
         img_product = (ImageView) rootView.findViewById(R.id.img_dv_product);
-        Products product = (Products) getArguments().getSerializable(ARG_PRODUCT);
-        Users user = (Users) getArguments().getSerializable(ARG_USER);
+        tradify = (Button) rootView.findViewById(R.id.btn_dv_tradify);
+        product = (Products) getArguments().getSerializable(ARG_PRODUCT);
+        user = (Users) getArguments().getSerializable(ARG_USER);
         txt_name.setText(product.getProductName());
         txt_details.setText(product.getDescription());
         txt_mode.setText(product.getMode());
@@ -140,6 +148,23 @@ public class Fragement_ProductDetailView extends Fragment implements
             txt_username.setVisibility(View.VISIBLE);
             txt_username.setText(user.getUsername());
         }
+        txt_username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //someEventListener.someEvent((String) txt_username.getText());
+                Intent userProfileIntent = new Intent(getActivity(), UserProfileActivity.class);
+                userProfileIntent.putExtra("username", user.getUserId());
+                getActivity().startActivity(userProfileIntent);
+            }
+        });
+        tradify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sender = user.getContactNumber();//"+12017555242";
+                txtMessage = "Interested in your shitty product.";
+                sendSMS(sender, txtMessage);
+            }
+        });
         long date = product.getPostedDate();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String postedDate = format.format(date);
@@ -180,6 +205,42 @@ public class Fragement_ProductDetailView extends Fragment implements
         } catch (Exception e) {
             e.getMessage();
             return null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //sms.sendTextMessage(sender, null, txtMessage, null, null);
+                Log.d("sms sent", "sent");
+                Toast.makeText(getContext(),"Notified owner!",Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getContext(),"Grant Permission!",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void sendSMS(String phoneNumber, String message)
+    {
+        //PendingIntent pi = PendingIntent.getActivity(this, 0,
+        //      new Intent(this, SMS.class), 0);
+        sms = SmsManager.getDefault();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getContext().checkSelfPermission(Manifest.permission.SEND_SMS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[]{Manifest.permission.SEND_SMS},
+                        1);
+            } else {
+                //sms.sendTextMessage(phoneNumber, null, message, null, null);
+                Log.d("sms sent", "sent");
+                Toast.makeText(getContext(),"Notified owner!",Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //sms.sendTextMessage(phoneNumber, null, message, null, null);
+            Log.d("sms sent", "sent");
+            Toast.makeText(getContext(),"Notified owner!",Toast.LENGTH_SHORT).show();
         }
     }
 

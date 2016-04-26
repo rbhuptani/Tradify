@@ -120,7 +120,7 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
         createLocationRequest();
         buildGoogleApiClient();
         Bundle bundleData = getIntent().getExtras();
-        //try {
+        try {
             final Bitmap prodImage = (Bitmap) bundleData.getParcelable("prodImage");
 
             //conversion from image to string
@@ -143,11 +143,11 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
 
                 }
             });
-        //}
-        /*catch(Exception ex){
+        }
+        catch(Exception ex){
             Toast.makeText(this, "Selected Image is too big.", Toast.LENGTH_SHORT).show();
             ex.printStackTrace();
-        }*/
+        }
         tradify = (Button) findViewById(R.id.tradifyButton);
         tradify.setOnClickListener(new View.OnClickListener() {
             @Override
