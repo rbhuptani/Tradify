@@ -69,7 +69,7 @@ public class Products implements Serializable {
     public String getVideoId() {
         return VideoId;
     }
-    @JsonProperty("Mode")
+    @JsonProperty("VideoId")
     public void setVideoId(String VideoId) {
         this.VideoId = VideoId;
     }

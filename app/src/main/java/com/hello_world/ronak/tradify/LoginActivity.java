@@ -111,10 +111,7 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
                 else
                     UserContext.USEREMAIL =authData.getProviderData().get("email").toString();
                 UserContext.USERPROFILEURL = authData.getProviderData().get("profileImageURL").toString();
-                String bimage = "";
-                        //BitMapToString(getBitmapFromURL(UserContext.USERPROFILEURL));
-                addUsertoDB(userID,UserContext.USERNAME,"NaN",UserContext.USEREMAIL,bimage);
-                //UserContext.USERPROFILEURL = bimage;
+                addUsertoDB(userID,UserContext.USERNAME,"NaN",UserContext.USEREMAIL,UserContext.USERPROFILEURL);
                 break;
         }
         //Toast.makeText(getApplicationContext(), LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
@@ -128,7 +125,6 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
         uref.child(userID).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                String key = "Username";
                 for(MutableData md :mutableData.getChildren() ){
                     if(md.getKey() == "Username")
                         UserContext.USERNAME = md.getValue().toString();
@@ -154,10 +150,10 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
 
     }
 
-    public void addUsertoDB(final String uid,String uname,String uPassword,String uemail,String upic){
+    public void addUsertoDB(final String uid,String uname,String uPassword,String uemail, final String upic){
         final Firebase uref = new Firebase("https://tradify.firebaseio.com/Users");
         final Users user = new Users();
-        Log.d("Email",uemail);
+        Log.d("Email", uemail);
         if(uemail == "")
             uemail = "Not Available";
 
@@ -165,12 +161,16 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
         user.setEmail(uemail);
         user.setUsername(uname);
         user.setPassword(uPassword);
-        user.setUserImage(upic);
         user.setAddress("");
         user.setContactNumber(0);
         uref.child(uid).runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
+
+                String bimage = "";
+                if(upic != "")
+                    bimage = BitMapToString(getBitmapFromURL(upic));
+                user.setUserImage(bimage);
                 if (mutableData.getValue() == null) {
                     mutableData.setValue(user);
                     return Transaction.success(mutableData);

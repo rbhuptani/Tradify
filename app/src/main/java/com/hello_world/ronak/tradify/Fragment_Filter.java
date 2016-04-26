@@ -28,11 +28,11 @@ public class Fragment_Filter  extends Fragment{
     final int DAY30 = 3;
 
     Button btn_reset,btn_apply;
-    CheckBox chk_cat_ele,chk_cat_cars,chk_cat_sports,chk_cat_home,chk_cat_movies,chk_cat_fashion,chk_cat_baby,chk_cat_others;
-    CheckBox chk_post_24hr,chk_post_7days,chk_post_30days;
-    CheckBox chk_dist_nearby,chk_dist_area,chk_dist_city;
+    RadioButton chk_cat_ele,chk_cat_cars,chk_cat_sports,chk_cat_home,chk_cat_movies,chk_cat_fashion,chk_cat_baby,chk_cat_others;
+    RadioButton chk_post_24hr,chk_post_7days,chk_post_30days;
+    RadioButton chk_dist_nearby,chk_dist_area,chk_dist_city;
     EditText et_price_min,et_price_max;
-    CheckBox chk_sort_dist,chk_sort_posted;
+    RadioButton chk_sort_dist,chk_sort_posted;
     RadioButton rb_sort_price_min,rb_sort_price_max;
     OnFilterAppliedListener filterListner;
     public interface OnFilterAppliedListener{
@@ -61,32 +61,26 @@ public class Fragment_Filter  extends Fragment{
         btn_reset = (Button) rootView.findViewById(R.id.btn_reset);
         btn_apply = (Button) rootView.findViewById(R.id.btn_apply);
 
-        chk_cat_ele = (CheckBox) rootView.findViewById(R.id.chk_ele);
-        chk_cat_cars = (CheckBox) rootView.findViewById(R.id.chk_cars);
-        chk_cat_sports = (CheckBox) rootView.findViewById(R.id.chk_sports);
-        chk_cat_home = (CheckBox) rootView.findViewById(R.id.chk_home);
-        chk_cat_movies = (CheckBox) rootView.findViewById(R.id.chk_movies);
-        chk_cat_fashion = (CheckBox) rootView.findViewById(R.id.chk_fashion);
-        chk_cat_baby = (CheckBox) rootView.findViewById(R.id.chk_baby);
-        chk_cat_others = (CheckBox) rootView.findViewById(R.id.chk_others);
+        chk_cat_ele = (RadioButton) rootView.findViewById(R.id.chk_ele);
+        chk_cat_cars = (RadioButton) rootView.findViewById(R.id.chk_cars);
+        chk_cat_sports = (RadioButton) rootView.findViewById(R.id.chk_sports);
+        chk_cat_home = (RadioButton) rootView.findViewById(R.id.chk_home);
+        chk_cat_movies = (RadioButton) rootView.findViewById(R.id.chk_movies);
+        chk_cat_fashion = (RadioButton) rootView.findViewById(R.id.chk_fashion);
+        chk_cat_baby = (RadioButton) rootView.findViewById(R.id.chk_baby);
+        chk_cat_others = (RadioButton) rootView.findViewById(R.id.chk_others);
 
 
-        chk_post_24hr = (CheckBox) rootView.findViewById(R.id.chk_24hr);
-        chk_post_7days = (CheckBox) rootView.findViewById(R.id.chk_7days);
-        chk_post_30days = (CheckBox) rootView.findViewById(R.id.chk_30days);
-
-        chk_dist_nearby = (CheckBox) rootView.findViewById(R.id.chk_nearby);
-        chk_dist_area = (CheckBox) rootView.findViewById(R.id.chk_area);
-        chk_dist_city = (CheckBox) rootView.findViewById(R.id.chk_city);
+        chk_post_24hr = (RadioButton) rootView.findViewById(R.id.chk_24hr);
+        chk_post_7days = (RadioButton) rootView.findViewById(R.id.chk_7days);
+        chk_post_30days = (RadioButton) rootView.findViewById(R.id.chk_30days);
 
         et_price_min = (EditText) rootView.findViewById(R.id.edit_prc_min);
         et_price_max = (EditText) rootView.findViewById(R.id.edit_prc_max);
 
-        chk_sort_dist = (CheckBox) rootView.findViewById(R.id.chk_sort_dist);
-        chk_sort_posted= (CheckBox) rootView.findViewById(R.id.chk_sort_posted);
+        chk_sort_posted= (RadioButton) rootView.findViewById(R.id.chk_sort_posted);
 
         rb_sort_price_min = (RadioButton) rootView.findViewById(R.id.rb_sort_pricelh);
-        rb_sort_price_max= (RadioButton) rootView.findViewById(R.id.rb_sort_pricehl);
         btn_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,12 +91,62 @@ public class Fragment_Filter  extends Fragment{
         btn_apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Query queryRef = filterbyDate(getPostedCode());
-                queryRef = filtebyPrice(queryRef.getRef());
+                Query queryRef = filter_ref;
+                if(Activity_HomeScreen.FILTER_PRICE)
+                    queryRef = filtebyPrice();
+                else if(Activity_HomeScreen.FILTER_TIME)
+                    queryRef = filterbyDate(getPostedCode());
+                else if(Activity_HomeScreen.FILTER_CAT)
+                    queryRef = filterByCategory();
+                else if (Activity_HomeScreen.SORT_PRICE)
+                    queryRef = sortByPrice();
+                else if (Activity_HomeScreen.SORT_TIME)
+                    queryRef = sortByTime();
                 filterListner.applyFilter(queryRef);
             }
         });
         return rootView;
+    }
+
+    public Query sortByPrice(){
+        Query queryRef;
+        double fromPrice = Double.MAX_VALUE;
+        double toPrice = 0;
+        queryRef = filter_ref.orderByChild("Price").startAt(toPrice).endAt(fromPrice);
+        return queryRef;
+
+    }
+
+    public Query sortByTime(){
+        Query queryRef;
+        Date currDate = new Date();
+        long currTime = currDate.getTime();
+        queryRef = filter_ref.orderByChild("PostedDate").startAt(0).endAt(currTime);
+        return  queryRef;
+    }
+
+    public Query filterByCategory(){
+        Query queryRef;
+        String cat = "";
+        if(chk_cat_ele.isChecked())
+            cat = "Electronics";
+        if(chk_cat_cars.isChecked())
+            cat = "Cars and Motors";
+        if(chk_cat_sports.isChecked())
+            cat = "Sports and Games";
+        if(chk_cat_home.isChecked())
+            cat = "Electronics";
+        if(chk_cat_movies.isChecked())
+            cat = "Movies, Music and Books";
+        if(chk_cat_fashion.isChecked())
+            cat = "Fashion and Accessories";
+        if(chk_cat_baby.isChecked())
+            cat = "Baby and Child";
+        if(chk_cat_others.isChecked())
+            cat = "Others";
+        Log.d("Category :",cat);
+        queryRef = filter_ref.orderByChild("Category").equalTo(cat);
+        return  queryRef;
     }
 
     public int getPostedCode(){
@@ -116,6 +160,7 @@ public class Fragment_Filter  extends Fragment{
 
     }
     public Query filterbyDate(int code){
+        Log.d("Return Code :",String.valueOf(code));
         Query queryRef;
         boolean flag = false;
         Calendar cal = Calendar.getInstance();
@@ -134,19 +179,18 @@ public class Fragment_Filter  extends Fragment{
                 flag = true;
                 break;
         }
+        Log.d("Days : ",String.valueOf(days));
         cal.add(Calendar.DATE, days);
         Date currDate = new Date();
         long currTime = currDate.getTime();
         long yTime =  cal.getTime().getTime();
+        Log.d("Start time:",String.valueOf(yTime));
+        Log.d("End time:",String.valueOf(currTime));
         queryRef = filter_ref.orderByChild("PostedDate").startAt(yTime).endAt(currTime);
-        /*if(flag) {
-            Log.d("filterbydate","no date found : " + String.valueOf(days) );
-            queryRef = filter_ref;
-        }*/
         return  queryRef;
     }
 
-    public Query filtebyPrice(Query ref){
+    public Query filtebyPrice(){
         Query queryRef;
         double fromPrice = Double.MAX_VALUE;
         double toPrice = 0;
@@ -162,9 +206,7 @@ public class Fragment_Filter  extends Fragment{
                 fromPrice = Double.parseDouble(et_price_max.getText().toString());
         }
         catch(NumberFormatException e){}
-        if(ref == null)
-            ref = filter_ref;
-        queryRef = ref.orderByChild("Price").startAt(toPrice).endAt(fromPrice);
+        queryRef = filter_ref.orderByChild("Price").startAt(toPrice).endAt(fromPrice);
         return queryRef;
     }
 
