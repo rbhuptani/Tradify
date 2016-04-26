@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.hello_world.ronak.tradify.AccountSettingsActivity">
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"/>
+<TextView
+    android:id="@+id/acctSettingLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Account Settings"
+    android:textStyle="bold"
+    android:layout_below="@id/profileImage"/>
+<LinearLayout
+    android:id="@+id/profNameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/acctSettingLabel"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/profNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile Name"/>
+    <EditText
+        android:id="@+id/profNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/profNameLabel"/>
+</LinearLayout>
+<LinearLayout
+    android:id="@+id/passLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/profNameLayout"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/oldPassLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Old Password"/>
+    <EditText
+        android:id="@+id/oldPassEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/oldPassLabel"/>
+</LinearLayout>
+<LinearLayout
+    android:id="@+id/newPassLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/passLayout"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/newPassLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Password"/>
+    <EditText
+        android:id="@+id/newPassEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/newPassLabel"/>
+</LinearLayout>
+<LinearLayout
+    android:id="@+id/confirmPassLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/newPassLayout"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/confirmPassLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Password"/>
+    <EditText
+        android:id="@+id/confirmPassEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/confirmPassLabel"/>
+</LinearLayout>
+<!--TextView
+    android:id="@+id/notifLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Notifications"
+    android:layout_below="@id/confirmPassLayout"
+    android:layout_marginTop="20dp"
+    android:textStyle="bold"/>
+<LinearLayout
+    android:id="@+id/vibrationLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/notifLabel"
+    android:layout_marginTop="20dp"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/vibration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vibration"/>
+    <Switch
+        android:id="@+id/vibSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:switchMinWidth="50dp"
+        />
+</LinearLayout>
+<LinearLayout
+    android:id="@+id/lightLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/vibrationLayout"
+    android:layout_marginTop="20dp"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Light"/>
+    <Switch
+        android:id="@+id/lightSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:switchMinWidth="50dp"
+        />
+</LinearLayout>
+<LinearLayout
+    android:id="@+id/soundLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/lightLayout"
+    android:layout_marginTop="20dp"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/sound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sound"/>
+    <Switch
+        android:id="@+id/soundSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:switchMinWidth="50dp"/>
+</LinearLayout>
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/soundLayout"
+        android:text="save"/-->
+</RelativeLayout>

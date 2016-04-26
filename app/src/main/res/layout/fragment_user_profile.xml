@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hello_world.ronak.tradify.UserProfileActivity">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/profilePic"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_alignParentLeft="true"/>
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/profilePic"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userName"
+        android:layout_toRightOf="@id/profilePic"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:id="@+id/emailId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/address"
+        android:layout_toRightOf="@id/profilePic"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:id="@+id/contactNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailId"
+        android:layout_toRightOf="@id/profilePic"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabstrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:layout_below="@id/profilePic"
+        app:tabTextColor="@color/colorTabPrimary"
+        app:tabSelectedTextColor="@color/colorSelectTabPrimary"
+        app:tabIndicatorColor="@color/colorUnderline"
+        app:tabGravity="fill"
+        android:layout_marginTop="10dp">
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.sharm_000.homework3.ViewPagerActivity"
+        android:layout_below="@id/tabstrip">
+    </android.support.v4.view.ViewPager>
+</RelativeLayout>
