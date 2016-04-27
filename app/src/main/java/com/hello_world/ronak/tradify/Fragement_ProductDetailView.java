@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -86,6 +88,9 @@ public class Fragement_ProductDetailView extends Fragment implements
     Button tradify;
     String sender;
     String txtMessage;
+    ViewFlipper viewFlipper;
+    float lastX;
+
 
     public static Fragement_ProductDetailView newInstance(Products product, Users user) {
         Fragement_ProductDetailView fragment = new Fragement_ProductDetailView();
@@ -128,6 +133,7 @@ public class Fragement_ProductDetailView extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragement_productdetailview, container, false);
+        viewFlipper = (ViewFlipper)  rootView.findViewById(R.id.viewFlipper);
         txt_name = (TextView) rootView.findViewById(R.id.txt_dv_productName);
         txt_details = (TextView) rootView.findViewById(R.id.txt_dv_productDetails);
         txt_mode = (TextView) rootView.findViewById(R.id.txt_dv_transactionMode);
@@ -140,6 +146,7 @@ public class Fragement_ProductDetailView extends Fragment implements
         txt_name.setText(product.getProductName());
         txt_details.setText(product.getDescription());
         txt_mode.setText(product.getMode());
+        img_product.setTransitionName(product.getProductId());
         if (user.getUsername() == "") {
             rootView.findViewById(R.id.lbl_dv_userName).setVisibility(View.GONE);
             txt_username.setVisibility(View.GONE);
@@ -194,8 +201,58 @@ public class Fragement_ProductDetailView extends Fragment implements
         YouTubePlayerSupportFragment playerFragment =
                 (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.moviePlayer);
         playerFragment.initialize(getString(R.string.google_maps_key),this);
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent touchevent) {
+                switch (touchevent.getAction()) {
+
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = touchevent.getX();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        float currentX = touchevent.getX();
+
+                        // Handling left to right screen swap.
+                        if (lastX < currentX) {
+
+                            // If there aren't any other children, just break.
+                            if (viewFlipper.getDisplayedChild() == 0)
+                                break;
+
+                            // Next screen comes in from left.
+                            viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_left);
+                            // Current screen goes out from right.
+                            viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_right);
+
+                            // Display next screen.
+                            viewFlipper.showNext();
+                        }
+
+                        // Handling right to left screen swap.
+                        if (lastX > currentX) {
+
+                            // If there is a child (to the left), kust break.
+                            if (viewFlipper.getDisplayedChild() == 1)
+                                break;
+
+                            // Next screen comes in from right.
+                            viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_right);
+                            // Current screen goes out from left.
+                            viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_left);
+
+                            // Display previous screen.
+                            viewFlipper.showPrevious();
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
+
         return rootView;
     }
+
+
 
     public Bitmap StringToBitMap(String encodedString) {
         try {

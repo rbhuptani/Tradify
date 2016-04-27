@@ -17,6 +17,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.transition.ChangeBounds;
+import android.transition.ChangeImageTransform;
+import android.transition.ChangeTransform;
+import android.transition.Fade;
+import android.transition.TransitionSet;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -57,6 +62,14 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
         } catch (Exception e) {
             e.getMessage();
             return null;
+        }
+    }
+
+    public class DetailsTransition extends TransitionSet {
+
+        public DetailsTransition(){
+            setOrdering(ORDERING_TOGETHER);
+            addTransition(new ChangeBounds()).addTransition(new ChangeTransform()).addTransition(new ChangeImageTransform());
         }
     }
 
@@ -296,6 +309,8 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
         }
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -371,10 +386,18 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
     }
 
     @Override
-    public void onListItemSelected(Products product,Users user) {
+    public void onListItemSelected(Products product,Users user,View sharedElement) {
         currFragment =  Fragement_ProductDetailView.newInstance(product, user);
-        getSupportFragmentManager().beginTransaction()
+        currFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(1000));
+        currFragment.setEnterTransition(new Fade());
+        currFragment.setExitTransition(new Fade());
+        currFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(1000));
+        Log.d("SharedElement_homescree : ", sharedElement.getTransitionName());
+        getSupportFragmentManager().beginTransaction().addSharedElement(sharedElement,sharedElement.getTransitionName())
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+
+        /*getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();*/
     }
 
     @Override
@@ -414,7 +437,10 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.drw_my_profile:
-                Toast.makeText(getApplicationContext(),"My profile clicked",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"My profile clicked",Toast.LENGTH_SHORT).show();
+                intent = new Intent(this,UserProfileActivity.class);
+                intent.putExtra("username", UserContext.USERID);
+                startActivity(intent);
                 break;
             case R.id.drw_abtus:
                 Toast.makeText(getApplicationContext(), "About us clicked", Toast.LENGTH_SHORT).show();

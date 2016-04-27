@@ -30,7 +30,7 @@ public class CurrentItemsFragment extends Fragment {
     /*Query _qref = ref;
     Query _qrefTemp = refTemp;*/
     static String currUserId;
-    TradifyFirebaseAdapter tfa;
+    //TradifyFirebaseAdapter tfa;
     RecyclerView mrecyclerView;
     LinearLayoutManager mLayoutManagar;
     Products product;
@@ -82,6 +82,7 @@ public class CurrentItemsFragment extends Fragment {
         mLayoutManagar = new LinearLayoutManager(getActivity());
         mrecyclerView.setLayoutManager(mLayoutManagar);
         tra = new TradifyRecyclerAdapter(getContext());
+//        mListner = (OnListItemSelectedListener) getActivity();
         try{
             new SetupAdapter(tra).execute();
         }
@@ -192,18 +193,27 @@ public class CurrentItemsFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(Void voids ){
-            Log.d("Post execute method","called");
+            Log.d("Post execute method", "called");
             final TradifyRecyclerAdapter tra = adapterRef.get();
-            tra.SetOnItemClickListener(new TradifyRecyclerAdapter.OnItemClickListener_Recycler() {
-                @Override
-                public void onItemClick(View v, int position) {
-                    Products product = tra.getItem(position);
-                    new getUserData(position).execute();
-                    Log.d("Mode ", product.getMode());
-                    mListner.onListItemSelected(product, user);
-                }
-            });
-            tra.notifyItemChanged(0);
+            if(tra != null) {
+                tra.SetOnItemClickListener(new TradifyRecyclerAdapter.OnItemClickListener_Recycler() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+                        Products product = tra.getItem(position);
+                        new getUserData(position).execute();
+                        Log.d("Mode ", product.getMode());
+                        /*Intent intent = new Intent(getContext(),Activity_HomeScreen.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("userprofile",true);
+                        bundle.putSerializable("product",product);
+                        bundle.putSerializable("user",user);
+                        intent.putExtras(bundle);
+                        startActivity(intent);*/
+                        //mListner.onListItemSelected(product, user);
+                    }
+                });
+                tra.notifyItemChanged(0);
+            }
         }
     }
 
@@ -215,7 +225,7 @@ public class CurrentItemsFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            product = tfa.getItem(position);
+            product = tra.getItem(position);
             user = getUserDetails(product.getUserID());
             try {
                 Thread.sleep(1000);

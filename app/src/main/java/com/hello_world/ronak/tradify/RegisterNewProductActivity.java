@@ -40,17 +40,21 @@ import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import mehdi.sakout.fancybuttons.FancyButton;
+
 public class RegisterNewProductActivity extends AppCompatActivity implements LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener   {
 
     ImageView image;
     TextView prodName;
+    TextView prodVideo;
     TextView prodDesc;
     Spinner dropDown1;
     TextView listOfItems;
     ActionBar recyclerActionBar;
     Button tradify;
+    FancyButton fancy_Tradify;
     String mode = "Sell";
     Products newProduct = new Products();
     Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
@@ -148,16 +152,18 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
             Toast.makeText(this, "Selected Image is too big.", Toast.LENGTH_SHORT).show();
             ex.printStackTrace();
         }
-        tradify = (Button) findViewById(R.id.tradifyButton);
-        tradify.setOnClickListener(new View.OnClickListener() {
+        //tradify = (Button) findViewById(R.id.tradifyButton);
+        fancy_Tradify = (FancyButton) findViewById(R.id.tradifyButton);
+        //tradify.setOnClickListener(new View.OnClickListener() {
+        fancy_Tradify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String productID;
-                String Video_URL = "https://www.youtube.com/watch?v=ANHXqIfjLG4"; //prodVideo.getEditableText().toString();
-                String[] temp = Video_URL.split("=");
+
 
                 prodName = (TextView) findViewById(R.id.itemName);
                 prodDesc = (TextView) findViewById(R.id.itemDetails);
+                prodVideo = (TextView) findViewById(R.id.itemVideoId);
                 listOfItems = (TextView) findViewById(R.id.listOfItems);
                 //set values into object
                 newProduct.setProductName(prodName.getEditableText().toString());
@@ -179,11 +185,13 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
                 productID = UserContext.USEREMAIL + prodName.getEditableText().toString() + prodDesc.getEditableText().toString() + currDate.toString() ;
                 productID = String.valueOf(productID.hashCode());
                 newProduct.setProductId("PID_" + productID);
+                String Video_URL = prodVideo.getEditableText().toString();
+                String[] temp = Video_URL.split("=");
                 try {
                     newProduct.setVideoId(temp[1]);
                 }
                 catch (Exception ex){
-                    newProduct.setVideoId("");
+                    newProduct.setVideoId("NaN");
                 }
                 ref.child("PID_" + productID).setValue(newProduct, new Firebase.CompletionListener() {
                     @Override

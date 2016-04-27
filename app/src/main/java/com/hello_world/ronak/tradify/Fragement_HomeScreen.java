@@ -42,7 +42,7 @@ public class Fragement_HomeScreen extends Fragment {
     LinearLayoutManager mLayoutManagar;
     OnListItemSelectedListener mListner;
     public interface OnListItemSelectedListener{
-        public void onListItemSelected(Products product,Users user);
+        public void onListItemSelected(Products product,Users user,View SharedElement);
         public void onMenuItemClicked();
     }
     public Fragement_HomeScreen() {
@@ -88,7 +88,7 @@ public class Fragement_HomeScreen extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 try {
-                    new getUserData(position).execute();
+                    new getUserData(position,v).execute();
                 }
                 catch(Exception ex){
                     ex.printStackTrace();
@@ -123,8 +123,10 @@ public class Fragement_HomeScreen extends Fragment {
         int position;
         Products product;
         Users user;
-        public  getUserData(int p){
+        final WeakReference<View> viewWeakReference;
+        public  getUserData(int p,View v){
             position = p;
+            viewWeakReference = new WeakReference<View>(v);
         }
 
         @Override
@@ -142,7 +144,9 @@ public class Fragement_HomeScreen extends Fragment {
 
         @Override
         protected void onPostExecute(Void voids) {
-            mListner.onListItemSelected(product,user);
+            View v = viewWeakReference.get();
+            Log.d("SharedElement_fh : ", v.getTransitionName());
+            mListner.onListItemSelected(product,user,v);
         }
     }
 
@@ -194,46 +198,5 @@ public class Fragement_HomeScreen extends Fragment {
     }
 
 
-    private class setupAdapter extends AsyncTask<Void,Void,Void> {
-        private final WeakReference<TradifyRecyclerAdapter> adapterRef;
-        public  setupAdapter(TradifyRecyclerAdapter adapter){
-            adapterRef = new WeakReference<TradifyRecyclerAdapter>(adapter);
-        }
-        @Override
-        protected Void doInBackground(Void... params) {
 
-            ref.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    ProductLocalDB.PRODUCT_LOCAL_DB.clear();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        Products product = ProductLocalDB.createProduct( (HashMap) ds.getValue());
-                        ProductLocalDB.PRODUCT_LOCAL_DB.add(product);
-                    }
-                    Log.d("Product DB count", String.valueOf(ProductLocalDB.PRODUCT_LOCAL_DB.size()));
-
-                }
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Void voids ){
-            Log.d("Post execute method","called");
-            final TradifyRecyclerAdapter tra = adapterRef.get();
-            tra.SetOnItemClickListener(new TradifyRecyclerAdapter.OnItemClickListener_Recycler() {
-                @Override
-                public void onItemClick(View v, int position) {
-                    Products product = tra.getItem(position);
-                    Users user = getUserDetails(product.getUserID());
-                    Log.d("Mode ", product.getMode());
-                    mListner.onListItemSelected(product, user);
-                }
-            });
-            tra.notifyItemChanged(0);
-        }
-    }
 }
