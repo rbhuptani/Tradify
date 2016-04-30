@@ -105,6 +105,7 @@ public class Fragment_Filter  extends Fragment{
                 filterListner.applyFilter(queryRef);
             }
         });
+        getActivity().findViewById(R.id.fab).setVisibility(View.GONE);
         return rootView;
     }
 

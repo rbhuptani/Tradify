@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -59,9 +60,17 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * Created by ronak_000 on 4/18/2016.
@@ -71,6 +80,8 @@ public class Fragement_ProductDetailView extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener, YouTubePlayer.OnInitializedListener {
+    static Firebase refNotif = new Firebase("https://tradify.firebaseio.com/Notifications");
+    static Firebase refProducts = new Firebase("https://tradify.firebaseio.com/Products");
     private GoogleApiClient mGoogleApiClient;
     private int RECOVERY_DIALOG_REQUEST = 1;
     private SupportMapFragment mMapFragment;
@@ -83,14 +94,15 @@ public class Fragement_ProductDetailView extends Fragment implements
     public static Users user;
     YouTubePlayer mPlayer;
     String mVideoId;
-    TextView txt_name, txt_details, txt_mode, txt_username, txt_loi;
+    TextView txt_name, txt_details, txt_mode, txt_username, txt_loi,txt_price,txt_date,txt_cat;
     ImageView img_product;
     Button tradify;
+    ImageButton left_ind,right_ind;
     String sender;
     String txtMessage;
     ViewFlipper viewFlipper;
     float lastX;
-
+    FancyButton f_tradify;
 
     public static Fragement_ProductDetailView newInstance(Products product, Users user) {
         Fragement_ProductDetailView fragment = new Fragement_ProductDetailView();
@@ -140,18 +152,25 @@ public class Fragement_ProductDetailView extends Fragment implements
         txt_username = (TextView) rootView.findViewById(R.id.txt_dv_userName);
         txt_loi = (TextView) rootView.findViewById(R.id.txt_dv_LOI);
         img_product = (ImageView) rootView.findViewById(R.id.img_dv_product);
-        tradify = (Button) rootView.findViewById(R.id.btn_dv_tradify);
+        //tradify = (Button) rootView.findViewById(R.id.btn_dv_tradify);
+        f_tradify = (FancyButton) rootView.findViewById(R.id.btn_dv_tradify);
+        txt_price = (TextView) rootView.findViewById(R.id.txt_dv_productPrice);
+        txt_date = (TextView) rootView.findViewById(R.id.txt_dv_posted_date);
+        txt_cat= (TextView) rootView.findViewById(R.id.txt_dv_cat);
+
         product = (Products) getArguments().getSerializable(ARG_PRODUCT);
         user = (Users) getArguments().getSerializable(ARG_USER);
         txt_name.setText(product.getProductName());
         txt_details.setText(product.getDescription());
         txt_mode.setText(product.getMode());
+        txt_price.setText(String.valueOf(product.getPrice()));
+        txt_cat.setText(product.getCategory());
         img_product.setTransitionName(product.getProductId());
         if (user.getUsername() == "") {
-            rootView.findViewById(R.id.lbl_dv_userName).setVisibility(View.GONE);
+            //rootView.findViewById(R.id.lbl_dv_userName).setVisibility(View.GONE);
             txt_username.setVisibility(View.GONE);
         } else {
-            rootView.findViewById(R.id.lbl_dv_userName).setVisibility(View.VISIBLE);
+            //rootView.findViewById(R.id.lbl_dv_userName).setVisibility(View.VISIBLE);
             txt_username.setVisibility(View.VISIBLE);
             txt_username.setText(user.getUsername());
         }
@@ -159,25 +178,50 @@ public class Fragement_ProductDetailView extends Fragment implements
             @Override
             public void onClick(View v) {
                 //someEventListener.someEvent((String) txt_username.getText());
-                Intent userProfileIntent = new Intent(getActivity(), UserProfileActivity.class);
-                userProfileIntent.putExtra("username", user.getUserId());
-                getActivity().startActivity(userProfileIntent);
+                try {
+                    Intent userProfileIntent = new Intent(getActivity(), UserProfileActivity.class);
+                    userProfileIntent.putExtra("username", user.getUserId());
+                    getActivity().startActivity(userProfileIntent);
+                } catch (Exception ex) {
+                    Log.d("Failure: ", ex.getMessage());
+                }
             }
         });
-        tradify.setOnClickListener(new View.OnClickListener() {
+        if(UserContext.USERID.equals(user.getUserId())){
+            //tradify.setText("Mark as Sold");
+            f_tradify.setText("Mark as Sold");
+        }
+        if(product!=null && product.getSold()!=null && product.getSold()){
+            //tradify.setText("Sold");
+            //tradify.setEnabled(false);
+            f_tradify.setText("Sold");
+            f_tradify.setBackgroundColor(getResources().getColor(R.color.divider));
+            f_tradify.setEnabled(false);
+        }
+        //tradify.
+        f_tradify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sender = user.getContactNumber();//"+12017555242";
-                txtMessage = "Interested in your shitty product.";
-                sendSMS(sender, txtMessage);
+                if (UserContext.USERID.equals(user.getUserId())) {
+                    refProducts.child(product.getProductId()).child("Sold").setValue(true);
+                    f_tradify.setText("Sold");
+                    f_tradify.setEnabled(false);
+                } else {
+                    sender = user.getContactNumber();//"+12017555242";
+                    txtMessage = "Interested in your product.";
+                    sendSMS(sender, txtMessage);
+                    String notifMsg = UserContext.USERNAME + " is interested in product " + product.getProductName();
+                    refNotif.child(user.getUserId()).child(product.getProductId()).setValue(notifMsg);
+                }
+                //refNotif.child(user.getUserId()).child("InterestProduct").setValue(product.getPrductName());
             }
         });
         long date = product.getPostedDate();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String postedDate = format.format(date);
-        String temp = String.valueOf(product.getPrice()) + " : " + postedDate + " : " + String.valueOf(product.getCategory());
-        //txt_loi.setText(product.getListOfItems());
-        txt_loi.setText(temp);
+        txt_date.setText(postedDate);
+
+        txt_loi.setText(product.getListOfItems());
         img_product.setImageBitmap(StringToBitMap(product.getProductImage()));
         String Lat_Long = product.getLocation();
         String[] Lat_LongA = Lat_Long.split(",");
@@ -197,57 +241,45 @@ public class Fragement_ProductDetailView extends Fragment implements
         if(mMapFragment!=null){
             mMapFragment.getMapAsync(this);
         }
-        mVideoId = "OrHw0nQHqTs";
+        mVideoId = product.getVideoId();
         YouTubePlayerSupportFragment playerFragment =
                 (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.moviePlayer);
-        playerFragment.initialize(getString(R.string.google_maps_key),this);
-        rootView.setOnTouchListener(new View.OnTouchListener() {
+        playerFragment.initialize(getString(R.string.google_maps_key), this);
+        left_ind = (ImageButton) rootView.findViewById(R.id.view_left);
+        right_ind = (ImageButton) rootView.findViewById(R.id.view_right);
+
+        left_ind.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent touchevent) {
-                switch (touchevent.getAction()) {
+            public void onClick(View v) {
+                if(viewFlipper.getDisplayedChild() == 1){
 
-                    case MotionEvent.ACTION_DOWN:
-                        lastX = touchevent.getX();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        float currentX = touchevent.getX();
 
-                        // Handling left to right screen swap.
-                        if (lastX < currentX) {
-
-                            // If there aren't any other children, just break.
-                            if (viewFlipper.getDisplayedChild() == 0)
-                                break;
-
-                            // Next screen comes in from left.
-                            viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_left);
-                            // Current screen goes out from right.
-                            viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_right);
-
-                            // Display next screen.
-                            viewFlipper.showNext();
-                        }
-
-                        // Handling right to left screen swap.
-                        if (lastX > currentX) {
-
-                            // If there is a child (to the left), kust break.
-                            if (viewFlipper.getDisplayedChild() == 1)
-                                break;
-
-                            // Next screen comes in from right.
-                            viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_right);
-                            // Current screen goes out from left.
-                            viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_left);
-
-                            // Display previous screen.
-                            viewFlipper.showPrevious();
-                        }
-                        break;
+                    viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_left);
+                    // Current screen goes out from right.
+                    viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_right);
+                    // Display previous screen.
+                    viewFlipper.showPrevious();
                 }
-                return false;
+
             }
         });
+
+        right_ind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewFlipper.getDisplayedChild() == 0) {
+
+                    viewFlipper.setInAnimation(viewFlipper.getContext(), R.anim.slide_in_from_right);
+                    // Current screen goes out from left.
+                    viewFlipper.setOutAnimation(viewFlipper.getContext(), R.anim.slide_out_to_left);
+
+                    // Display next screen.
+                    viewFlipper.showNext();
+
+                }
+            }
+        });
+
 
         return rootView;
     }
@@ -443,7 +475,7 @@ public class Fragement_ProductDetailView extends Fragment implements
 
         //This flag tells the player to automatically enter fullscreen when in landscape. Since we don't have
         //landscape layout for this activity, this is a good way to allow the user rotate the video player.
-        mPlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
+        //mPlayer.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
 
         //This flag controls the system UI such as the status and navigation bar, hiding and showing them
         //alongside the player UI

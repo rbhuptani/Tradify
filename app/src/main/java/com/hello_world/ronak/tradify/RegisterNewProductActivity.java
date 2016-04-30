@@ -50,12 +50,14 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
     TextView prodName;
     TextView prodVideo;
     TextView prodDesc;
-    Spinner dropDown1;
+    TextView prodPrice;
+    Spinner dropDown1,category;
     TextView listOfItems;
     ActionBar recyclerActionBar;
     Button tradify;
     FancyButton fancy_Tradify;
     String mode = "Sell";
+    String cat = "Others";
     Products newProduct = new Products();
     Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
     String imageFile = "";
@@ -114,9 +116,13 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
         recyclerActionBar.setHomeButtonEnabled(true);
         setContentView(R.layout.activity_register_new_product);
         final Spinner dropdown = (Spinner) findViewById(R.id.spinner);
+        category= (Spinner) findViewById(R.id.category);
         String[] items = new String[]{"Sell", "Rent", "Trade", "Any"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        String[] categories = new String[]{"Electronics","Sports and Games","Home and Garden","Others","Baby and Child","Fashion and Accessories","Movies, Music and Books","Cars and Motors"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.spinner_item, items);
         dropdown.setAdapter(adapter);
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this, R.layout.spinner_item, categories);
+        category.setAdapter(adapter1);
         image = (ImageView) findViewById(R.id.newProdImage);
         if (!isGoogleAvailable()) {
             finish();
@@ -147,6 +153,17 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
 
                 }
             });
+            category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    cat = parent.getItemAtPosition(position).toString();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
         catch(Exception ex){
             Toast.makeText(this, "Selected Image is too big.", Toast.LENGTH_SHORT).show();
@@ -159,12 +176,16 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
             @Override
             public void onClick(View v) {
                 String productID;
-
-
                 prodName = (TextView) findViewById(R.id.itemName);
                 prodDesc = (TextView) findViewById(R.id.itemDetails);
                 prodVideo = (TextView) findViewById(R.id.itemVideoId);
                 listOfItems = (TextView) findViewById(R.id.listOfItems);
+                prodPrice = (TextView) findViewById(R.id.price);
+                if(prodName.getEditableText().toString().isEmpty() || prodDesc.getEditableText().toString().isEmpty() ){
+                    Toast.makeText(getApplicationContext(),"Please Enter all Required Values",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 //set values into object
                 newProduct.setProductName(prodName.getEditableText().toString());
                 newProduct.setDescription(prodDesc.getEditableText().toString());
@@ -180,8 +201,17 @@ public class RegisterNewProductActivity extends AppCompatActivity implements Loc
                 newProduct.setProductImage(imageFile);
                 newProduct.setSold(false);
                 newProduct.setUserID(UserContext.USERID);
-                newProduct.setPrice(0); //change
-                newProduct.setCategory("Others"); //change
+                try{
+                    if(prodPrice.getText().toString().isEmpty())
+                        newProduct.setPrice(0); //change
+                    else
+                        newProduct.setPrice(Double.parseDouble(prodPrice.getText().toString()));
+                }
+                catch (Exception e){
+                    newProduct.setPrice(0);
+                }
+
+                newProduct.setCategory(cat); //change
                 productID = UserContext.USEREMAIL + prodName.getEditableText().toString() + prodDesc.getEditableText().toString() + currDate.toString() ;
                 productID = String.valueOf(productID.hashCode());
                 newProduct.setProductId("PID_" + productID);

@@ -6,10 +6,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.Query;
@@ -36,6 +39,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class Activity_HomeScreen extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener ,Fragement_HomeScreen.OnListItemSelectedListener, Fragment_Filter.OnFilterAppliedListener {
     Fragment currFragment;
@@ -73,15 +77,48 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
         }
     }
 
+    boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if(fragments != null){
+            for(Fragment fragment : fragments){
+                if(fragment instanceof  Fragment_Filter || fragment instanceof Fragement_ProductDetailView) {
+                    super.onBackPressed();
+                    return;
+                }
+            }
+        }
+
+        if (doubleBackToExitPressedOnce) {
+            Log.d("here","here");
+            this.finishAffinity();
+           // android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(1);
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 5000);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity__home_screen);
         mtoolBar = (Toolbar) findViewById(R.id.hometoolbar);
+        mtoolBar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(mtoolBar);
         mActionbar = getSupportActionBar();
         mActionbar.setDisplayHomeAsUpEnabled(true);
-
         mtoolBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +130,7 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
         mnavigationView = (NavigationView) findViewById(R.id.navigation_view);
         Bitmap b = StringToBitMap(UserContext.USERPROFILEURL);
         ((ImageView)mnavigationView.getHeaderView(0).findViewById(R.id.profile_image)).setImageBitmap(b);
+        ((TextView)mnavigationView.getHeaderView(0).findViewById(R.id.nav_profile_name)).setText(UserContext.USERNAME);
         mnavigationView.setNavigationItemSelectedListener(this);
 
         mdrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
@@ -176,7 +214,7 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
             });
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recyclerContainer, currFragment).commit();
+                    .replace(R.id.recyclerContainer, currFragment).commitAllowingStateLoss();
         }
     }
 
@@ -388,13 +426,13 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
     @Override
     public void onListItemSelected(Products product,Users user,View sharedElement) {
         currFragment =  Fragement_ProductDetailView.newInstance(product, user);
-        currFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(1000));
+        currFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(500));
         currFragment.setEnterTransition(new Fade());
         currFragment.setExitTransition(new Fade());
-        currFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(1000));
-        Log.d("SharedElement_homescree : ", sharedElement.getTransitionName());
-        getSupportFragmentManager().beginTransaction().addSharedElement(sharedElement,sharedElement.getTransitionName())
-                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+        currFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(500));
+        Log.d("SElement_homescree : ", sharedElement.getTransitionName());
+        getSupportFragmentManager().beginTransaction().addSharedElement(sharedElement, sharedElement.getTransitionName())
+                .replace(R.id.recyclerContainer, currFragment).commitAllowingStateLoss();
 
         /*getSupportFragmentManager().beginTransaction()
                 .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();*/
@@ -404,26 +442,27 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
     public void onMenuItemClicked() {
         currFragment =  Fragment_Filter.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+                .replace(R.id.recyclerContainer, currFragment).commitAllowingStateLoss();
+    }
+
+    @Override
+    public void searchItemClicked(Query ref) {
+        currFragment =  Fragement_HomeScreen.newInstance(ref);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recyclerContainer, currFragment).commitAllowingStateLoss();
     }
 
     @Override
     public void applyFilter(Query ref) {
         currFragment =  Fragement_HomeScreen.newInstance(ref);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commit();
+                .replace(R.id.recyclerContainer, currFragment).addToBackStack(null).commitAllowingStateLoss();
     }
 
-    @Override
-    public void onBackPressed() {
-        int count = getFragmentManager().getBackStackEntryCount();
-        if (count == 0) {
-            super.onBackPressed();
-        } else {
-            getFragmentManager().popBackStack();
-        }
 
-    }
+
+
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -432,8 +471,8 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
                 intent = new Intent(this,Activity_HomeScreen.class);
                 startActivity(intent);
                 break;
-            case R.id.drw_add_product:
-                intent = new Intent(this,RegisterNewProductActivity.class);
+            case R.id.drw_settings:
+                intent = new Intent(this,AccountSettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.drw_my_profile:
@@ -443,9 +482,11 @@ public class Activity_HomeScreen extends AppCompatActivity implements Navigation
                 startActivity(intent);
                 break;
             case R.id.drw_abtus:
-                Toast.makeText(getApplicationContext(), "About us clicked", Toast.LENGTH_SHORT).show();
+                intent = new Intent(this,AboutUsActivity.class);
+                startActivity(intent);
                 break;
             case R.id.drw_logoff:
+                LoginActivity.firebaseRef.unauth();
                 intent = new Intent(this,LoginActivity.class);
                 startActivity(intent);
                 break;

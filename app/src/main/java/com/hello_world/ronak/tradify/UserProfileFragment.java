@@ -7,16 +7,20 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ToxicBakery.viewpager.transforms.AccordionTransformer;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+
+
 
 
 public class UserProfileFragment extends Fragment {
@@ -27,6 +31,8 @@ public class UserProfileFragment extends Fragment {
     ViewPager myViewPager;
     MyFragmentPagerAdapter myFragmentPagerAdapter;
     View view;
+
+
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -50,7 +56,7 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_user_profile, container, false);
+       view = inflater.inflate(R.layout.fragment_user_profile, container, false);
         name = (TextView) view.findViewById(R.id.userName);
         address = (TextView) view.findViewById(R.id.address);
         emailId = (TextView) view.findViewById(R.id.emailId);
@@ -59,15 +65,17 @@ public class UserProfileFragment extends Fragment {
 
         userId= getArguments().getString("username");
 
-        /*String username = "";
-        if(extra!=null){
-            username = extra.getString("username");
-        }*/
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+       ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("Number of children",String.valueOf(dataSnapshot.getChildrenCount()));
                 for (DataSnapshot users : dataSnapshot.getChildren()) {
-                    String userFromDb = (String) users.child("UserId").getValue();
+                    Object o = users.child("UserId").getValue();
+                    String userFromDb = "NA";
+                    if(o != null)
+                        userFromDb = o.toString();
+                    Log.d("userFromDb",userFromDb);
                     if (userFromDb.equals(userId)) {
                         name.setText((String) users.child("Username").getValue());
                         address.setText((String) users.child("Address").getValue());
@@ -91,6 +99,7 @@ public class UserProfileFragment extends Fragment {
         myViewPager = (ViewPager) view.findViewById(R.id.viewpager);
         myFragmentPagerAdapter = new MyFragmentPagerAdapter(getChildFragmentManager(),3, userId);
         myViewPager.setAdapter(myFragmentPagerAdapter);
+        myViewPager.setPageTransformer(true, new AccordionTransformer() );
         myViewPager.setCurrentItem(3);
         TabLayout tabLayout = (TabLayout)view.findViewById(R.id.tabstrip);
         tabLayout.setupWithViewPager(myViewPager);

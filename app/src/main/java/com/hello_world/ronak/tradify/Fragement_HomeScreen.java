@@ -44,6 +44,7 @@ public class Fragement_HomeScreen extends Fragment {
     public interface OnListItemSelectedListener{
         public void onListItemSelected(Products product,Users user,View SharedElement);
         public void onMenuItemClicked();
+        public void searchItemClicked(Query ref);
     }
     public Fragement_HomeScreen() {
         // Required empty public constructor
@@ -194,6 +195,23 @@ public class Fragement_HomeScreen extends Fragment {
                 return false;
             }
         });
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        if(searchView != null){
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    Log.d("Query", query.toString());
+                    Query qref = ref.orderByChild("ProductName").equalTo(query);
+                    mListner.searchItemClicked(qref);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return true;
+                }
+            });
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 

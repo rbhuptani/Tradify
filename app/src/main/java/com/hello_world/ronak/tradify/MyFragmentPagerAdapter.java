@@ -13,12 +13,16 @@ import java.util.Arrays;
 public class MyFragmentPagerAdapter extends FragmentPagerAdapter {
     int count;
     String userId;
-    ArrayList<String> tabs = new ArrayList<String>(Arrays.asList("Current Items","Sold","Favorites")) ;
+    ArrayList<String> tabs = new ArrayList<String>(Arrays.asList("Current Items","Sold","Notifications")) ;
    //MovieData movieData = new MovieData();
 
     @Override
     public Fragment getItem(int position) {
-        return CurrentItemsFragment.newInstance(userId, position);
+        if(position==2){
+         return NotificationsFragment.newInstance();
+        }else {
+            return CurrentItemsFragment.newInstance(userId, position);
+        }
         //UserProfileFragment.newInstance((HashMap<String,?>) movieData.getItem(position));
     }
 

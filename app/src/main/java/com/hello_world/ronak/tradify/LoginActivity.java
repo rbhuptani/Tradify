@@ -43,6 +43,7 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
     private static final String FIREBASE_ERROR = "Firebase Error";
     private static final String USER_ERROR = "User Error";
     private static final String LOGIN_SUCCESS = "Login Success";
+    private static final String LOGOUT_SUCCESS = "Logout Success";
     private static final String USER_CREATION_SUCCESS =  "Successfully created user";
     private static final String USER_CREATION_ERROR =  "User creation error";
     private static final String EMAIL_INVALID =  "email is invalid :";
@@ -90,6 +91,12 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
     }
 
     @Override
+    public void onBackPressed() {
+        android.os.Process.killProcess(android.os.Process.myPid()); System.exit(1);
+    }
+
+
+    @Override
     public Firebase getFirebaseRef() {
         return firebaseRef;
     }
@@ -116,7 +123,8 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
         }
         //Toast.makeText(getApplicationContext(), LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
         setUserDetails(userID);
-        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        //Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent myIntent = new Intent(LoginActivity.this, Activity_HomeScreen.class);
         LoginActivity.this.startActivity(myIntent);
     }
 
@@ -134,7 +142,12 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
                         UserContext.USEREMAIL = md.getValue().toString();
                     if(md.getKey() == "UserImage")
                         UserContext.USERPROFILEURL = md.getValue().toString();
+                    if(md.getKey() == "Address")
+                        UserContext.USERADRESS = md.getValue().toString();
+                    if(md.getKey() == "ContactNumber")
+                        UserContext.USERCONTACTNUMBER = md.getValue().toString();
                 }
+                Log.d("USer Context : ",UserContext.USERNAME + "," + UserContext.USERID + "," + UserContext.USEREMAIL + ","+UserContext.USERADRESS  + ","+UserContext.USERCONTACTNUMBER );
                 return Transaction.abort();
             }
 
@@ -214,7 +227,7 @@ public class LoginActivity extends FirebaseLoginBaseActivity{
 
     @Override
     public void onFirebaseLoggedOut() {
-        Toast.makeText(getApplicationContext(), LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), LOGOUT_SUCCESS, Toast.LENGTH_SHORT).show();
     }
 
     @Override

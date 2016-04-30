@@ -8,4 +8,6 @@ public class UserContext {
     static String USEREMAIL = "";
     static String USERNAME="";
     static String USERPROFILEURL="";
+    static String USERCONTACTNUMBER="";
+    static String USERADRESS="";
 }

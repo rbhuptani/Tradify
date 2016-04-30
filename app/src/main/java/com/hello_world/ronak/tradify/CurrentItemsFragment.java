@@ -1,6 +1,7 @@
 package com.hello_world.ronak.tradify;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,9 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+
+
 public class CurrentItemsFragment extends Fragment {
     static Firebase ref = new Firebase("https://tradify.firebaseio.com/Products");
     static Firebase refTemp = new Firebase("https://tradify.firebaseio.com/Temp");
@@ -72,6 +76,21 @@ public class CurrentItemsFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    public class WrapContentLinearLayoutManager extends LinearLayoutManager {
+        public WrapContentLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+            super(context, orientation, reverseLayout);
+        }
+
+        @Override
+        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+            try {
+                super.onLayoutChildren(recycler, state);
+            } catch (IndexOutOfBoundsException e) {
+                Log.e("probe", "meet a IOOBE in RecyclerView");
+            }
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,7 +98,8 @@ public class CurrentItemsFragment extends Fragment {
         final View view =inflater.inflate(R.layout.fragment_current_items, container, false);
         mrecyclerView = (RecyclerView) view.findViewById(R.id.cardListUserProf);
         mrecyclerView.setHasFixedSize(true);
-        mLayoutManagar = new LinearLayoutManager(getActivity());
+        //mLayoutManagar = new LinearLayoutManager(getActivity());
+        mLayoutManagar = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mrecyclerView.setLayoutManager(mLayoutManagar);
         tra = new TradifyRecyclerAdapter(getContext());
 //        mListner = (OnListItemSelectedListener) getActivity();
